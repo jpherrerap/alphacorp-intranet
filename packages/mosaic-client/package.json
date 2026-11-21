@@ -1,0 +1,6 @@
+{
+  "name": "@alphacorp/mosaic-client",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js"
+}

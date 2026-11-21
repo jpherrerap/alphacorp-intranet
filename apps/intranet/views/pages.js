@@ -18,6 +18,7 @@ export const layout = (title, user, body) => html`<!doctype html>
 <title>${title} · AlphaCorp</title><style>${STYLE}</style></head>
 <body><header><strong>AlphaCorp Intranet</strong>${user && html`<nav>
   <a href="/expedientes">Expedientes</a>
+  <a href="/asistente">Asistente</a>
   <span class="muted">${user.name} · ${user.area}</span>
   <form method="post" action="/logout"><button>Salir</button></form></nav>`}</header>
 <main><h1>${title}</h1>${body}</main></body></html>`;
@@ -40,3 +41,17 @@ export const record = (r, docs) => html`<p>${r.title}. Vence el ${r.deadline}.</
 export const document = (d) => html`<p>${d.body}</p><p><a href="/expedientes/${d.record_id}">Volver al expediente</a></p>`;
 
 export const message = (text) => html`<p class="notice">${text}</p>`;
+
+const OUTCOMES = {
+  allow: 'La respuesta llegó completa a tu bandeja.',
+  repair: 'mosAIc entregó una versión reparada de la respuesta.',
+  review: 'La respuesta quedó en revisión humana y no llegó a tu bandeja.',
+};
+
+export const assistant = (tasks, inbox, outcome) => html`
+  ${Object.hasOwn(OUTCOMES, outcome) && message(OUTCOMES[outcome])}
+  <h2>Preguntar</h2>
+  <ul>${Object.entries(tasks).map(([id, t]) => html`<li><form method="post" action="/asistente">
+    <input type="hidden" name="task" value="${id}"><button>${t.question}</button></form></li>`)}</ul>
+  <h2>Bandeja</h2>
+  ${inbox.length ? html`<ul>${inbox.map((m) => html`<li>${m.text}</li>`)}</ul>` : html`<p class="muted">Sin mensajes.</p>`}`;

@@ -11,9 +11,14 @@ export function show(req, res) {
   pages.render(res, `Expediente ${record.code}`, req.user, pages.record(record, documents.visible(req.user, record.id)));
 }
 
-export function openDocument(req, res) {
+export async function openDocument(req, res) {
   const doc = documents.open(req.user, req.params.id);
   if (!doc) return pages.render(res, 'No disponible', req.user, pages.message('No existe o tu rol no puede leerlo.'), 404);
-  documents.markRead(req.user, doc, today());
+  const at = today();
+  // Evidence reaches mosAIc before the user sees the text; otherwise later answers underestimate what they know.
+  await req.app.locals.mosaic?.observe([
+    { origin: doc.origin, user: req.user.id, grade: 'read', resource: doc.resource, at, facts: doc.facts },
+  ]);
+  documents.markRead(req.user, doc, at);
   pages.render(res, doc.title, req.user, pages.document(doc));
 }
