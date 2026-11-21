@@ -1,0 +1,11 @@
+{
+  "name": "alphacorp-intranet",
+  "private": true,
+  "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "engines": { "node": "22.x" },
+  "scripts": {
+    "dev": "npm -w @alphacorp/intranet run dev",
+    "test": "node --test"
+  }
+}

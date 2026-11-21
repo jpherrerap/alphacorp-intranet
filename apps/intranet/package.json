@@ -1,0 +1,14 @@
+{
+  "name": "@alphacorp/intranet",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": {
+    "dev": "node --watch dev.js",
+    "start": "node dev.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
