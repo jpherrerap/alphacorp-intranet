@@ -1,6 +1,6 @@
 # AlphaCorp Intranet
 
-Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/platanus-hack/platanus-hack-26-cl-team-24). Reproduce el caso de ejemplo de mosAIc (organización `alphacorp`, operación `atlas`), así que el guardrail corre con su política por defecto.
+Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/platanus-hack/platanus-hack-26-cl-team-24). Reproduce el caso clásico de ejemplo de mosAIc (`examples/policy.yaml`, `case.yaml` e `history.yaml`: organización `alphacorp`, operación `atlas`).
 
 - `apps/intranet`: Express 5. `models/` (SQLite en memoria con `node:sqlite`), `controllers/`, `views/` (plantillas en JS que escapan todo).
 - `packages/mosaic-client`: cliente de la API HTTP de mosAIc.
@@ -18,7 +18,9 @@ Requiere Node 22.
 ```bash
 npm install
 npm test                      # no requiere mosAIc
-# en otra terminal, desde el repo de mosAIc: python -m uvicorn isde.api:create_app --factory --port 8001
+# en otra terminal, desde el repo de mosAIc (fija el caso clásico; el valor por defecto es el MVP):
+#   MOSAIC_POLICY=examples/policy.yaml MOSAIC_CASE=examples/case.yaml MOSAIC_HISTORY=examples/history.yaml \
+#   python -m uvicorn isde.api:create_app --factory --port 8001
 MOSAIC_URL=http://127.0.0.1:8001 npm run dev   # http://localhost:3000
 ```
 
