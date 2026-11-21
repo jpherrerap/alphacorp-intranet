@@ -62,6 +62,15 @@ test('el asistente envía el borrador a mosAIc y solo muestra la bandeja', async
   assert.doesNotMatch(page, /ya está firmado/);
 });
 
+test('el acta viaja como adjunto para que mosAIc la transcriba', async () => {
+  assert.equal((await as('luis', '/asistente', { task: 'acta' })).status, 302);
+  const [, item] = calls[0];
+  assert.equal(item.task, 'record');
+  assert.equal(item.draft, 'Te adjunto el acta.');
+  assert.equal(item.attachments[0].media_type, 'image/png');
+  assert.equal(Buffer.from(item.attachments[0].data, 'base64').subarray(1, 4).toString(), 'PNG');
+});
+
 test('rechaza tareas desconocidas sin llamar a mosAIc', async () => {
   assert.equal((await as('ana', '/asistente', { task: 'toString' })).status, 400);
   assert.equal(calls.length, 0);

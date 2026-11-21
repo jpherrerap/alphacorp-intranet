@@ -10,6 +10,7 @@ Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/plat
 - **La identidad es de la intranet.** El usuario de la sesión fija el rol que recibe mosAIc. El login es una cookie sin firmar: solo sirve para el mock.
 - **Evidencia.** Abrir un documento envía una observación `read` a `POST /v1/observations` antes de mostrar el texto. Si mosAIc no responde, el documento no se muestra.
 - **Asistente.** El agente redacta un borrador con las cláusulas del caso y lo envía a `POST /v1/messages`. El usuario solo ve su bandeja (`GET /v1/inbox/{user}`), nunca el borrador.
+- **Adjuntos.** «¿Me mandas el acta de O-17?» envía un texto inocente con el escaneo del acta adjunto. mosAIc lo transcribe con Claude (imágenes y PDF) o con ElevenLabs (audio, requiere `ELEVENLABS_API_KEY` en mosAIc) y, como un adjunto no se puede reescribir, si filtra algo la respuesta queda en revisión.
 
 ## Ejecutar
 
