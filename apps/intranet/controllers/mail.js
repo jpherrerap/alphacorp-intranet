@@ -1,10 +1,11 @@
 import { Readable } from 'node:stream';
 import { invalid, NOTICE_SENDER } from '@alphacorp/mail-engine';
 import { users } from '../models/index.js';
+import { seed } from '../models/seed.js';
 import * as pages from '../views/pages.js';
 
-// Each classification is a task of mosAIc's case; mosAIc decides against what that task needs.
-export const CLASSIFICATIONS = { due: 'Plazos · O-17', signature: 'Firma · oferta BetaAI', record: 'Estado · expediente O-17' };
+export const CLASSIFICATIONS = seed.classifications;
+// shortcut: drafts come from the seed and stay after sending, so the demo can be repeated; store them per user if they must be edited or removed.
 // Legal releases or discards what mosAIc held; it already sees every document of the case.
 const REVIEWER = 'senior_legal';
 // Vercel cuts request bodies at ~4.5 MB; refusing earlier gives a clear message instead of a 413 from the platform.
@@ -24,11 +25,13 @@ function engine(req, res) {
 // Every mail page shares the folder sidebar and its counters; like Outlook, an open email keeps its folder list beside it.
 function box(req, res, mail, title, folder, { list = null, reading = null }, status = 200) {
   const reviewer = isReviewer(req.user);
-  const counts = { inbox: mail.unread(req.user.id), held: reviewer ? mail.held().length : null };
+  const counts = { inbox: mail.unread(req.user.id), held: reviewer ? mail.held().length : null, drafts: draftsOf(req.user).length || null };
   pages.render(res, title, req.user, pages.mailbox({ title, folder, counts, list, reading }), status);
 }
 
-const LISTS = { inbox: (mail, user) => mail.inbox(user.id), sent: (mail, user) => mail.sent(user.id), held: (mail) => mail.held() };
+const draftsOf = (user) => seed.drafts.filter((d) => d.sender === user.id);
+const LISTS = { inbox: (mail, user) => mail.inbox(user.id), sent: (mail, user) => mail.sent(user.id), held: (mail) => mail.held(),
+  drafts: (mail, user) => draftsOf(user) };
 const listOf = (key, mail, user, selected) => pages.mailList(key, LISTS[key](mail, user), directory(), selected);
 
 const folder = (key, title) => (req, res) => {
@@ -41,6 +44,7 @@ const folder = (key, title) => (req, res) => {
 export const inbox = folder('inbox', 'Recibidos');
 export const sent = folder('sent', 'Enviados');
 export const held = folder('held', 'Retenidos por mosAIc');
+export const drafts = folder('drafts', 'Borradores');
 
 function renderCompose(req, res, mail, { notice, draft = {} } = {}, status = 200) {
   const people = users.all().filter((u) => u.id !== req.user.id);
@@ -49,7 +53,7 @@ function renderCompose(req, res, mail, { notice, draft = {} } = {}, status = 200
 
 export function composeForm(req, res) {
   const mail = engine(req, res);
-  if (mail) renderCompose(req, res, mail);
+  if (mail) renderCompose(req, res, mail, { draft: draftsOf(req.user).find((d) => d.id === req.query.borrador) });
 }
 
 // Multipart parsing with the platform's Request.formData; returns null when the body is too large or malformed.

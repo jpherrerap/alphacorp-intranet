@@ -374,14 +374,15 @@ const TONE = { repaired: 'info', released: 'info' };
 const tone = (status) => TONE[status] ?? DELIVERY[status][0];
 const chip = (d, people) => html`<span class="badge small ${tone(d.status)}">${icon(STATUS_ICON[d.status])}${people[d.recipient]?.name.split(' ')[0]} · ${SHORT[d.status]}</span>`;
 
-const FOLDERS = [['inbox', '/correo', 'Recibidos', 'inbox'], ['sent', '/correo/enviados', 'Enviados', 'send'], ['held', '/correo/retenidos', 'Retenidos', 'shield']];
+const FOLDERS = [['inbox', '/correo', 'Recibidos', 'inbox'], ['sent', '/correo/enviados', 'Enviados', 'send'], ['held', '/correo/retenidos', 'Retenidos', 'shield'],
+  ['drafts', '/correo/borradores', 'Borradores', 'pencil']];
 
 export const mailbox = ({ title, folder, counts, list, reading }) => {
   const name = FOLDERS.find(([id]) => id === folder)?.[2];
   return full(html`<div class="mail ${list ? '' : 'wide'} ${list && reading ? 'open' : ''}">
   <aside class="folders">
     <a class="btn primary" href="/correo/redactar">${icon('pencil')}<span class="label">Redactar</span></a>
-    <nav aria-label="Carpetas">${FOLDERS.filter(([id]) => id !== 'held' || counts.held !== null).map(([id, href, label, ico]) => html`
+    <nav aria-label="Carpetas">${FOLDERS.filter(([id]) => counts[id] !== null).map(([id, href, label, ico]) => html`
       <a href="${href}" ${current(folder === id)}>${icon(ico)}<span class="label">${label}</span> ${counts[id] > 0 && html`<span class="count">${counts[id]}</span>`}</a>`)}
     </nav>
   </aside>
@@ -404,6 +405,10 @@ export function mailList(kind, list, people, selected) {
       const note = m.status === 'repaired' || m.status === 'released';
       return row({ href: `/correo/${m.id}`, person: people[m.sender], who: people[m.sender]?.name, at: m.at, subject: m.subject, selected: m.id === selected,
         files: m.files, preview: m.text, unread: !m.read_at, extra: note && html`<div class="chips"><span class="badge small info">${icon(STATUS_ICON[m.status])}${review(m)}</span></div>` });
+    }
+    if (kind === 'drafts') {
+      return row({ href: `/correo/redactar?borrador=${encodeURIComponent(m.id)}`, person: people[m.to[0]], who: `Para: ${m.to.map((id) => people[id]?.name).join(', ')}`,
+        at: m.at, subject: m.subject, preview: m.body, extra: html`<div class="chips"><span class="badge small wait">${icon('pencil')}Borrador</span></div>` });
     }
     const shown = kind === 'held' ? m.deliveries.filter((d) => d.status === 'held') : m.deliveries;
     const who = kind === 'held' ? `De ${people[m.sender]?.name} · para ${shown.map((d) => people[d.recipient]?.name).join(', ')}`
