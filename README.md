@@ -2,7 +2,7 @@
 
 Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/platanus-hack/platanus-hack-26-cl-team-24). Reproduce el caso clásico de ejemplo de mosAIc (`examples/policy.yaml`, `case.yaml` e `history.yaml`: organización `alphacorp`, operación `atlas`).
 
-- `apps/intranet`: Express 5. `models/` (SQLite en memoria con `node:sqlite`), `controllers/`, `views/` (plantillas en JS que escapan todo).
+- `apps/intranet`: Express 5. `models/` (SQLite en memoria con `node:sqlite`, sembrada según `INTRANET_SEED`), `controllers/`, `views/` (plantillas en JS que escapan todo).
 - `packages/mosaic-client`: cliente de la API HTTP de mosAIc.
 - `packages/mail-engine`: motor de correos mock. Cada entrega pasa por mosAIc antes de llegar al destinatario.
 
@@ -30,6 +30,20 @@ npm test                      # no requiere mosAIc
 #   MOSAIC_POLICY=examples/policy.yaml MOSAIC_CASE=examples/case.yaml MOSAIC_HISTORY=examples/history.yaml \
 #   python -m uvicorn isde.api:create_app --factory --port 8001
 MOSAIC_URL=http://127.0.0.1:8001 npm run dev   # http://localhost:3000
+```
+
+### Casos (`INTRANET_SEED`)
+
+`INTRANET_SEED` elige el caso que se siembra al arrancar (directorio, expedientes, correos y preguntas del asistente). Los datos están en `apps/intranet/models/seeds/`.
+
+- `betaai` (por defecto): el caso clásico descrito arriba.
+- `vacuna`: el escenario de la vacuna VX-Aurora de Biovacunas del Sur del panel de mosAIc, con los mismos nombres. Ana y Luis son de Comunicaciones, Inés es de Ensayos clínicos (lee el informe) y Sofía sigue en Legal. Ana tiene dos **Borradores** listos para Luis: uno nombra los ensayos y el otro los parafrasea; al enviarlos, mosAIc debería retenerlos. El asistente no tiene preguntas en este caso. mosAIc se arranca con la política y el historial por defecto y el caso `examples/vacuna-case.yaml`, que agrega a los cuatro usuarios:
+
+```bash
+# en el repo de mosAIc
+MOSAIC_CASE=examples/vacuna-case.yaml python -m uvicorn isde.api:create_app --factory --port 8001
+# aquí
+INTRANET_SEED=vacuna MOSAIC_URL=http://127.0.0.1:8001 npm run dev
 ```
 
 Guion: Inés abre el acta de O-17. Ana y Luis preguntan «¿Cuándo vence el trámite?». Ana recibe la respuesta completa. Luis ya citó el acta, así que su respuesta se repara si mosAIc tiene clave de Claude y, sin clave, queda en revisión. Después, «¿En qué estado está O-17?» llega a Luis y queda en revisión para Ana.
