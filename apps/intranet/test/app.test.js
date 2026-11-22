@@ -33,6 +33,12 @@ test('ventas no ve el acta de firma; legal sí', async () => {
   assert.match(await res.text(), /ya está firmado/);
 });
 
+test('el tema elegido sale de la cookie y solo acepta claro u oscuro', async () => {
+  const page = (cookie) => fetch(base + '/login', { headers: { cookie } }).then((r) => r.text());
+  assert.match(await page('theme=dark'), /<html lang="es" data-theme="dark">/);
+  assert.match(await page('theme=dark"><x'), /<html lang="es" >/);
+});
+
 test('escapa el contenido en las vistas', async () => {
   assert.equal((await get('/expedientes/%3Cscript%3E', 'ana')).status, 404);
   assert.doesNotMatch(await (await get('/login')).text(), /<script/);
