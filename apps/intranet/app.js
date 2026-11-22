@@ -1,13 +1,17 @@
 import express from 'express';
 import { mosaicClient } from '@alphacorp/mosaic-client';
+import { mailEngine } from '@alphacorp/mail-engine';
+import { db } from './models/db.js';
 import * as session from './controllers/session.js';
 import * as records from './controllers/records.js';
 import * as assistant from './controllers/assistant.js';
+import * as mail from './controllers/mail.js';
 import * as pages from './views/pages.js';
 
 export function createApp({ mosaic = null } = {}) {
   const app = express();
   app.locals.mosaic = mosaic;
+  app.locals.mail = mosaic && mailEngine({ db, mosaic });
   app.use(express.urlencoded({ extended: false }));
   app.get('/', (req, res) => res.redirect('/expedientes'));
   app.get('/login', session.loginForm);
@@ -19,6 +23,11 @@ export function createApp({ mosaic = null } = {}) {
   app.get('/documentos/:id', records.openDocument);
   app.get('/asistente', assistant.index);
   app.post('/asistente', assistant.ask);
+  app.get('/correo', mail.index);
+  app.post('/correo', mail.send);
+  app.get('/correo/adjuntos/:id', mail.attachment);
+  app.get('/correo/:id', mail.show);
+  app.post('/correo/entregas/:id/:action', mail.act);
   app.use((err, req, res, next) => {
     console.error(err);
     pages.render(res, 'Error', req.user, pages.message('mosAIc no respondió. No se mostró ni entregó nada.'), 502);

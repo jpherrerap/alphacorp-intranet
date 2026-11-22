@@ -12,10 +12,12 @@ test('envía JSON a la ruta de la API', async () => {
   const client = mosaicClient('http://mosaic.test/', fakeFetch(200, { accepted: 1 }, calls));
   assert.deepEqual(await client.observe([{ origin: 'a' }]), { accepted: 1 });
   await client.inbox('ana/x');
+  await client.source({ origin: 'mail_x', accept: true });
   assert.equal(calls[0].url, 'http://mosaic.test/v1/observations');
   assert.deepEqual(JSON.parse(calls[0].body), { observations: [{ origin: 'a' }] });
   assert.equal(calls[1].url, 'http://mosaic.test/v1/inbox/ana%2Fx');
   assert.equal(calls[1].body, undefined);
+  assert.equal(calls[2].url, 'http://mosaic.test/v1/sources');
 });
 
 test('un error de mosAIc se propaga con su detalle', async () => {

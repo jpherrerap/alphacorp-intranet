@@ -1,0 +1,6 @@
+{
+  "name": "@alphacorp/mail-engine",
+  "private": true,
+  "type": "module",
+  "exports": "./index.js"
+}
