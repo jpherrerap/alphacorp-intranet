@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream';
-import { invalid } from '@alphacorp/mail-engine';
+import { invalid, NOTICE_SENDER } from '@alphacorp/mail-engine';
 import { users } from '../models/index.js';
 import * as pages from '../views/pages.js';
 
@@ -11,7 +11,9 @@ const REVIEWER = 'senior_legal';
 const MAX_BODY = 4_500_000;
 
 const isReviewer = (user) => user.role === REVIEWER;
-const directory = () => Object.fromEntries(users.all().map((u) => [u.id, u]));
+// mosAIc only appears as the sender of hold notices, never as a recipient one can pick.
+const directory = () => ({ ...Object.fromEntries(users.all().map((u) => [u.id, u])),
+  [NOTICE_SENDER]: { id: NOTICE_SENDER, name: 'mosAIc', role: 'system', area: 'Seguridad' } });
 
 function engine(req, res) {
   const { mail } = req.app.locals;

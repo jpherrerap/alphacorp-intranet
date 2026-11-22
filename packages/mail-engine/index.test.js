@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { beforeEach, test } from 'node:test';
-import { invalid, LIMITS, mailEngine, reviewIdOf } from './index.js';
+import { invalid, LIMITS, mailEngine, NOTICE_SENDER, reviewIdOf } from './index.js';
 
 let calls, decide, delivery, failing, mail;
 const mosaic = {
@@ -43,6 +43,28 @@ test('mosAIc revisa el texto libre por destinatario y solo entrega lo aprobado',
   assert.deepEqual(mail.inbox('ines'), []);
   assert.deepEqual(mail.sent('sofia')[0].deliveries.map((d) => [d.status, d.reason]),
     [['delivered', null], ['held', 'riesgo de inferencia'], ['held', 'adjunto no evaluable']]);
+});
+
+test('mosAIc avisa al remitente con un solo correo por cada correo retenido', async () => {
+  decide = ({ user }) => ({ ana: { status: 'approved' }, luis: { status: 'revise' }, ines: { status: 'rejected' } })[user];
+  const id = await mail.send(email({ sender: 'sofia', subject: 'Info O-17', to: ['ana', 'luis', 'ines'] }));
+  const [notice, ...rest] = mail.inbox('sofia');
+  assert.equal(rest.length, 0);
+  assert.equal(notice.sender, NOTICE_SENDER);
+  assert.equal(notice.subject, 'Tu correo «Info O-17» fue retenido');
+  assert.match(notice.text, /luis@alphacorp\.cl, ines@alphacorp\.cl/);
+  assert.match(notice.text, /riesgo de inferencia, adjunto no evaluable/);
+  assert.match(notice.text, /posible brecha de información/);
+  assert.doesNotMatch(notice.text, /ana@/);
+  assert.equal(mail.view('sofia', notice.id).text, notice.text);
+  assert.deepEqual(mail.inbox('ana').map((m) => m.id), [id]);
+});
+
+test('sin retención o con error de mosAIc no hay aviso', async () => {
+  await mail.send(email());
+  failing = true;
+  await mail.send(email());
+  assert.deepEqual(mail.inbox('ana'), []);
 });
 
 test('si la entrega pide reevaluar, el correo aprobado queda retenido', async () => {

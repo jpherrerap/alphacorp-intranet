@@ -16,6 +16,26 @@ const DELIVERED = ['delivered', 'repaired', 'released'];
 export const SEEDED = 'seed';
 // Why mosAIc held a delivery, as Legal reads it.
 const HELD = { revise: 'riesgo de inferencia', rejected: 'adjunto no evaluable', review: 'requiere reevaluación' };
+// System sender of the notice a sender gets when mosAIc holds their email; it is not in the directory, so nobody can write to it.
+export const NOTICE_SENDER = 'mosaic';
+// The notice names neither the protected fact nor why it was inferable, so it cannot leak what the hold stopped.
+const noticeOf = (mail, held) => ({
+  subject: `Tu correo «${mail.subject}» fue retenido`,
+  body: `Hola:
+
+mosAIc retuvo tu correo «${mail.subject}» para ${held.map((d) => `${d.recipient}@alphacorp.cl`).join(', ')} y no fue entregado.
+Motivo: ${[...new Set(held.map((d) => d.reason))].join(', ')}.
+
+Su contenido, solo o sumado a lo que el destinatario ya sabe, podría permitir inferir información confidencial de la operación. Esto puede significar una posible brecha de información. El correo quedó en revisión de Legal, que puede liberarlo o descartarlo.
+
+Para tus próximos correos:
+• No confirmes ni insinúes estados de firmas, ofertas o negociaciones que no te corresponda comunicar.
+• Evita combinar datos que por separado parecen inofensivos pero juntos revelan algo: contraparte, fechas, firmas o montos.
+• Comparte solo lo que el destinatario necesita para su tarea.
+• Si tienes dudas, consulta a Legal antes de enviar.
+
+mosAIc · guardrail de información de AlphaCorp`,
+});
 
 // The subject can leak as much as the body, so mosAIc reviews both as one draft.
 const draftOf = ({ subject, body }) => `Asunto: ${subject}\n\n${body}`;
@@ -78,6 +98,18 @@ export function mailEngine({ db, mosaic }) {
     }
   }
 
+  // One notice per email, listing every recipient it was held for; connection errors are not holds and send none.
+  function notify(mailId, recipients) {
+    const held = q.deliveries.all(mailId).filter((d) => d.status === 'held' && recipients.includes(d.recipient));
+    if (!held.length) return;
+    const mail = q.mail.get(mailId);
+    const { subject, body } = noticeOf(mail, held);
+    const id = randomUUID();
+    db.prepare('INSERT INTO mails VALUES (?, ?, ?, ?, ?, ?)').run(id, NOTICE_SENDER, 'aviso', subject, body, now());
+    db.prepare("INSERT INTO deliveries (id, mail_id, recipient, status, text, reason) VALUES (?, ?, ?, 'delivered', ?, 'notice')")
+      .run(`${id}:${mail.sender}`, id, mail.sender, body);
+  }
+
   const withDetails = (mail) => mail && { ...mail, deliveries: q.deliveries.all(mail.id),
     attachments: q.files.all(mail.id).map(({ data, ...meta }) => ({ ...meta, size: data.length })) };
 
@@ -91,6 +123,7 @@ export function mailEngine({ db, mosaic }) {
         db.prepare("INSERT INTO deliveries (id, mail_id, recipient, status) VALUES (?, ?, ?, 'pending')").run(d.id, id, recipient);
         await gate(d);
       }
+      notify(id, [...new Set(to)]);
       return id;
     },
 
@@ -110,6 +143,7 @@ export function mailEngine({ db, mosaic }) {
       const d = q.delivery.get(deliveryId);
       if (!d || d.status !== 'error' || q.mail.get(d.mail_id).sender !== sender) return false;
       await gate(d);
+      notify(d.mail_id, [d.recipient]);
       return true;
     },
 
