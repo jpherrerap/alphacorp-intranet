@@ -10,9 +10,9 @@ Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/plat
 
 - **La identidad es de la intranet.** El usuario de la sesión fija el rol que recibe mosAIc. El login es una cookie sin firmar: solo sirve para el mock.
 - **Evidencia.** Abrir un documento envía una observación `read` a `POST /v1/observations` antes de mostrar el texto. Si mosAIc no responde, el documento no se muestra.
-- **Correo** (`/correo`). Un humano redacta un correo que responde a una tarea del caso (`due`, `signature` o `record`). Puede adjuntar imágenes, PDF o audio: hasta 4 archivos y 4 MB en total, porque Vercel corta el body en unos 4,5 MB. El motor llama a `POST /v1/messages` una vez por destinatario con `request_id = <correo>:<destinatario>`:
+- **Correo** (`/correo`). AlphaCorp Mail tiene las carpetas Recibidos (con no leídos), Enviados y Retenidos, que solo ve Legal. Al redactar, el usuario elige Para, Asunto y una Clasificación, que es la tarea del caso (`due`, `signature` o `record`). Puede adjuntar imágenes, PDF o audio: hasta 4 archivos y 4 MB en total, porque Vercel corta el body en unos 4,5 MB. mosAIc revisa el asunto y el texto como un solo borrador (`Asunto: …\n\n<cuerpo>`). El motor llama a `POST /v1/messages` una vez por destinatario con `request_id = <correo>:<destinatario>`. Enviados muestra, por destinatario, el Envío (si llegó) y la Revisión (quién decidió y qué). Las bandejas parten con unos correos de ejemplo neutros que no pasaron por mosAIc y que se marcan como «previo a mosAIc».
   - `allow`: entrega el original con sus archivos.
-  - `repair`: entrega el texto reparado. Si el correo trae adjuntos, queda retenido.
+  - `repair`: entrega el texto reparado. Si mosAIc conserva el prefijo «Asunto:», recupera el asunto; si no, usa «Mensaje reparado por mosAIc». Si el correo trae adjuntos, queda retenido.
   - `review`: retiene el correo.
   - Si mosAIc falla, no entrega nada y el remitente puede reintentar.
   - El remitente ve el estado de cada destinatario. Legal (`senior_legal`) ve los retenidos y puede liberarlos o descartarlos. Antes de entregar uno liberado, el motor envía el cuerpo a `POST /v1/sources` para que mosAIc sepa lo que ahora conoce el destinatario. Los adjuntos liberados no se observan, porque `/v1/sources` solo acepta texto.
