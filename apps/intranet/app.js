@@ -1,6 +1,6 @@
 import express from 'express';
 import { mosaicClient } from '@alphacorp/mosaic-client';
-import { mailEngine } from '@alphacorp/mail-engine';
+import { mailEngine, transportFrom } from '@alphacorp/mail-engine';
 import { db } from './models/db.js';
 import { SEED_MAILS } from './models/mail.js';
 import * as session from './controllers/session.js';
@@ -12,7 +12,7 @@ import * as pages from './views/pages.js';
 export function createApp({ mosaic = null } = {}) {
   const app = express();
   app.locals.mosaic = mosaic;
-  app.locals.mail = mosaic && mailEngine({ db, mosaic });
+  app.locals.mail = mosaic && mailEngine({ db, mosaic, transport: transportFrom(process.env) });
   app.locals.mail?.seed(SEED_MAILS);
   app.use(express.urlencoded({ extended: false }));
   app.get('/', (req, res) => res.redirect('/expedientes'));

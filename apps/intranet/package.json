@@ -4,8 +4,8 @@
   "type": "module",
   "engines": { "node": "22.x" },
   "scripts": {
-    "dev": "node --watch dev.js",
-    "start": "node dev.js",
+    "dev": "node --env-file-if-exists=.env --watch dev.js",
+    "start": "node --env-file-if-exists=.env dev.js",
     "test": "node --test"
   },
   "dependencies": {
