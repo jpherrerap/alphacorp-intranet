@@ -15,7 +15,7 @@ export function createApp({ mosaic = null } = {}) {
   app.locals.mail = mosaic && mailEngine({ db, mosaic });
   app.locals.mail?.seed(seed.mails);
   app.use(express.urlencoded({ extended: false }));
-  app.get('/', (req, res) => res.redirect('/expedientes'));
+  app.get('/', (req, res) => res.redirect('/correo'));
   app.get('/login', session.loginForm);
   app.post('/login', session.login);
   app.post('/logout', session.logout);

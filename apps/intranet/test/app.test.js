@@ -22,6 +22,7 @@ test('el login fija la cookie del usuario', async () => {
   const res = await fetch(base + '/login', { method: 'POST', body: new URLSearchParams({ user: 'ana' }), redirect: 'manual' });
   assert.equal(res.status, 302);
   assert.match(res.headers.get('set-cookie'), /user=ana/);
+  assert.equal(res.headers.get('location'), '/correo');
   assert.equal((await fetch(base + '/login', { method: 'POST', body: new URLSearchParams({ user: 'x' }) })).status, 400);
 });
 
