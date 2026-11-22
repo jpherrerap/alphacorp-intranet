@@ -1,7 +1,15 @@
 import { SEEDED } from '@alphacorp/mail-engine';
 import { html, Raw } from './html.js';
 
-// Familiar intranet software, enlarged for a projector: 20px base (growing to 26px on 1080p), nothing under 18px; follows the OS light or dark setting.
+// Dark keeps the same structure; status tones lighten so they read as text too, and badges flip to dark ink.
+const DARK = `
+    --bg: #0e1418; --surface: #161f25; --fg: #e8eef2; --muted: #a9b6c1; --line: #2c3943; --hover: #1f2a31; --select: #173c44;
+    --brand: #0a2f37; --accent: #5cc0d2; --accent-fg: #06222a; --accent-soft: #163a42; --accent-hover: #7fd0de; --field: #4d5c68;
+    --ok: #5fd08f; --wait: #f0b44a; --fail: #ff8a7d; --info: #8fb4ff; --on-tone: #0b1216;
+    color-scheme: dark;`;
+
+// Familiar intranet software, enlarged for a projector: 20px base (growing to 26px on 1080p), nothing under 18px.
+// The theme follows the OS until the person picks one with the toggle at the bottom of the rail.
 const STYLE = new Raw(`
   :root {
     --bar: 4.5rem; --rail: 7rem;
@@ -12,13 +20,10 @@ const STYLE = new Raw(`
     --ease: cubic-bezier(.16, 1, .3, 1);
     color-scheme: light; font: clamp(20px, calc(6px + 1.05vw), 26px)/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
   }
-  /* Dark keeps the same structure; status tones lighten so they read as text too, and badges flip to dark ink. */
-  @media (prefers-color-scheme: dark) { :root {
-    --bg: #0e1418; --surface: #161f25; --fg: #e8eef2; --muted: #a9b6c1; --line: #2c3943; --hover: #1f2a31; --select: #173c44;
-    --brand: #0a2f37; --accent: #5cc0d2; --accent-fg: #06222a; --accent-soft: #163a42; --accent-hover: #7fd0de; --field: #4d5c68;
-    --ok: #5fd08f; --wait: #f0b44a; --fail: #ff8a7d; --info: #8fb4ff; --on-tone: #0b1216;
-    color-scheme: dark;
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {${DARK}
   } }
+  :root[data-theme="dark"] {${DARK}
+  }
   * { box-sizing: border-box; }
   html { scrollbar-color: var(--field) var(--bg); }
   body { margin: 0; background: var(--bg); color: var(--fg); caret-color: var(--accent); }
@@ -46,12 +51,16 @@ const STYLE = new Raw(`
   .bar .btn:hover { background: rgb(255 255 255 / .14); }
 
   .shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); min-height: calc(100dvh - var(--bar)); }
-  .rail { position: sticky; top: var(--bar); align-self: start; display: grid; gap: .35rem; padding: .75rem .5rem;
-          height: calc(100dvh - var(--bar)); align-content: start; background: var(--surface); border-right: 1px solid var(--line); }
-  .rail a { display: grid; justify-items: center; gap: .2rem; padding: .7rem .25rem; border-radius: .5rem; color: var(--muted);
+  .rail { position: sticky; top: var(--bar); align-self: start; display: flex; flex-direction: column; gap: .35rem; padding: .75rem .5rem;
+          height: calc(100dvh - var(--bar)); background: var(--surface); border-right: 1px solid var(--line); }
+  .rail a, .theme { display: grid; justify-items: center; gap: .2rem; padding: .7rem .25rem; border-radius: .5rem; color: var(--muted);
             text-decoration: none; font-size: .9rem; font-weight: 600; transition: background .2s, color .2s; }
-  .rail a .icon { width: 1.8rem; height: 1.8rem; }
-  .rail a:hover { background: var(--hover); color: var(--fg); }
+  .rail a .icon, .theme .icon { width: 1.8rem; height: 1.8rem; }
+  .rail a:hover, .theme:hover { background: var(--hover); color: var(--fg); }
+  .theme { margin-top: auto; width: 100%; border: 0; background: transparent; cursor: pointer; }
+  .theme.floating { position: fixed; left: 1rem; bottom: 1rem; width: auto; background: var(--surface); border: 1px solid var(--line); }
+  :root[data-theme="dark"] .theme .to-dark, :root:not([data-theme="dark"]) .theme .to-light { display: none; }
+  .theme span { display: grid; justify-items: center; gap: .2rem; }
   .rail a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
 
   .page { width: 100%; max-width: 76rem; padding: 2rem 2.5rem 3rem; display: grid; gap: 1.5rem; align-content: start; }
@@ -255,6 +264,8 @@ const ICONS = {
   clip: ['M21 11.5 12.5 20a5 5 0 0 1-7-7L14 4.5a3.5 3.5 0 0 1 5 5L10.5 18a2 2 0 0 1-3-3L15 7.5'],
   logout: ['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'm16 17 5-5-5-5', 'M21 12H9'],
   back: ['m12 19-7-7 7-7', 'M19 12H5'],
+  moon: ['M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'],
+  sun: ['M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z', 'M12 2v2', 'M12 20v2', 'm4.93 4.93 1.41 1.41', 'm17.66 17.66 1.41 1.41', 'M2 12h2', 'M20 12h2', 'm6.34 17.66-1.41 1.41', 'm19.07 4.93-1.41 1.41'],
   calendar: ['M8 2v4', 'M16 2v4', 'M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z', 'M3 10h18'],
 };
 const icon = (name, cls = '') => new Raw(`<svg class="icon ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name].map((d) => `<path d="${d}"/>`).join('')}</svg>`);
@@ -271,22 +282,30 @@ const avatar = (user, size = '') => html`<span class="avatar ${size}" style="--a
 // Pages that bring their own heading (mailbox, login) mark themselves as full so the layout skips its h1.
 const full = (raw) => Object.assign(raw, { full: true });
 
-export const layout = (title, user, body, path = '') => {
+// The chosen theme lives in a cookie the server reads, so the page renders in it with no flash; without one the OS decides.
+const THEME_FLIP = "const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;"
+  + "r.dataset.theme=d?'light':'dark';document.cookie='theme='+r.dataset.theme+';path=/;max-age=31536000;samesite=lax'";
+const themeOf = (cookie = '') => /(?:^|;\s*)theme=(dark|light)(?:;|$)/.exec(cookie)?.[1];
+const themeToggle = (cls) => html`<button type="button" class="theme ${cls}" onclick="${THEME_FLIP}">
+  <span class="to-dark">${icon('moon')}Oscuro</span><span class="to-light">${icon('sun')}Claro</span></button>`;
+
+export const layout = (title, user, body, path = '', theme) => {
   const section = path.split('/')[1];
   // Documents belong to a record, so they live under Expedientes.
   const app = APPS.find(([id]) => (section === 'documentos' ? 'expedientes' : section) === id);
   return html`<!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="es" ${new Raw(theme ? `data-theme="${theme}"` : '')}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title} · AlphaCorp</title><style>${STYLE}</style></head>
 <body><header class="bar"><a class="brand" href="/">${LOGO}<span class="brand-name">AlphaCorp</span></a>${app && html`<span class="app-name">${app[1]}</span>`}${user && html`
   <div class="me">${avatar(user, 'lg')}<span class="me-name">${user.name}<small>${user.area}</small></span>
     <form class="inline" method="post" action="/logout"><button class="btn" aria-label="Salir">${icon('logout')}<span>Salir</span></button></form></div>`}</header>
 ${user ? html`<div class="shell"><nav class="rail" aria-label="Aplicaciones">${APPS.map(([id, label, ico]) => html`
-  <a href="/${id}" ${current(app?.[0] === id)}>${icon(ico)}${label}</a>`)}</nav>
-<main>${body.full ? body : html`<div class="page"><h1>${title}</h1>${body}</div>`}</main></div>` : html`<main>${body}</main>`}</body></html>`;
+  <a href="/${id}" ${current(app?.[0] === id)}>${icon(ico)}${label}</a>`)}${themeToggle('')}</nav>
+<main>${body.full ? body : html`<div class="page"><h1>${title}</h1>${body}</div>`}</main></div>` : html`<main>${body}</main>${themeToggle('floating')}`}</body></html>`;
 };
 
-export const render = (res, title, user, body, status = 200) => res.status(status).send(layout(title, user, body, res.req.path).s);
+export const render = (res, title, user, body, status = 200) =>
+  res.status(status).send(layout(title, user, body, res.req.path, themeOf(res.req.headers.cookie)).s);
 
 export const login = (users) => full(html`<div class="login"><form class="pane-body" method="post" action="/login">
   <h1>Ingresar a la intranet</h1>
