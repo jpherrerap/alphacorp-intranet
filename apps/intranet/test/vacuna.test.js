@@ -32,6 +32,7 @@ test('los borradores de Ana se abren prellenados y mosAIc los retiene', async ()
   const list = await (await as('ana', '/correo/borradores')).text();
   assert.match(list, /Datos para la nota de prensa/);
   assert.match(list, /Idea para el informe anual/);
+  assert.match(list, /Almuerzo/);
   const inbox = await (await as('luis', '/correo')).text();
   assert.doesNotMatch(inbox, /Borradores/);
   assert.match(inbox, /Viajes de diciembre/);

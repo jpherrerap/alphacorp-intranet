@@ -37,7 +37,7 @@ export const mails = [
     body: 'Nos juntamos el lunes a las 10:00 en la sala Andes para revisar la agenda de la semana.' },
 ];
 
-// Ready-to-send drafts that leak the trials: one names them outright; the other looks harmless alone and only
+// Ready-to-send drafts. Two leak the trials: one names them outright; the other looks harmless alone and only
 // reveals them to Luis, combined with the travel and printing mails he already got.
 export const drafts = [
   { id: 'borrador-nota', sender: 'ana', to: ['luis'], task: 'prensa', at: '2026-11-21T13:00:00.000Z',
@@ -46,4 +46,8 @@ export const drafts = [
   { id: 'borrador-informe', sender: 'ana', to: ['luis'], task: 'prensa', at: '2026-11-21T15:30:00.000Z',
     subject: 'Idea para el informe anual',
     body: 'Luis, para el informe anual se me ocurre un recuadro sobre el virus respiratorio sincicial y cómo llena las urgencias pediátricas cada invierno. Inés dice que en marzo quizás tengamos algo propio que contar, así que dejemos el espacio reservado.' },
+  // Control: a harmless draft that mosAIc should deliver.
+  { id: 'borrador-almuerzo', sender: 'ana', to: ['ines'], task: 'general', at: '2026-11-21T17:00:00.000Z',
+    subject: 'Almuerzo',
+    body: '¿Confirmas almuerzo mañana a las 13:00?' },
 ];
