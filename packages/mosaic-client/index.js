@@ -13,6 +13,8 @@ export function mosaicClient(baseUrl, fetchImpl = fetch) {
   }
   return {
     message: (item) => call('POST', '/v1/messages', item),
+    review: (item) => call('POST', '/v1/reviews', item),
+    deliverReview: (id, user) => call('POST', `/v1/reviews/${encodeURIComponent(id)}/deliver`, { user }),
     observe: (observations) => call('POST', '/v1/observations', { observations }),
     source: (input) => call('POST', '/v1/sources', input),
     inbox: (user) => call('GET', `/v1/inbox/${encodeURIComponent(user)}`),

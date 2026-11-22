@@ -3,9 +3,10 @@ import { after, before, beforeEach, test } from 'node:test';
 import { createApp } from '../app.js';
 
 const calls = [];
-let action;
+let status;
 const fake = {
-  async message(item) { calls.push(item); return { request_id: item.request_id, action, text: null }; },
+  async review(item) { calls.push(item); return { review_id: item.review_id, status }; },
+  async deliverReview() { return { action: 'allow' }; },
   async source() { return { accepted: true, proposals: 1 }; },
 };
 
@@ -16,7 +17,7 @@ before(async () => {
   base = `http://127.0.0.1:${server.address().port}`;
 });
 after(() => server.close());
-beforeEach(() => { calls.length = 0; action = 'allow'; });
+beforeEach(() => { calls.length = 0; status = 'approved'; });
 
 const as = (user, path, body) => fetch(base + path, {
   method: body ? 'POST' : 'GET', body, headers: { cookie: `user=${user}` }, redirect: 'manual',
@@ -37,8 +38,9 @@ test('enviar con adjuntos: mosAIc decide y el destinatario recibe texto y archiv
   assert.equal(res.status, 302);
   const id = res.headers.get('location').split('/').at(-1);
   assert.equal(calls[0].user, 'luis');
-  assert.equal(calls[0].task, 'due');
-  assert.equal(calls[0].draft, 'Asunto: Acta O-17\n\nTe adjunto el acta.');
+  assert.equal(calls[0].task, 'email');
+  assert.equal(calls[0].question, 'Acta O-17');
+  assert.equal(calls[0].text, 'Asunto: Acta O-17\n\nTe adjunto el acta.');
   assert.deepEqual(calls[0].attachments.map((a) => [a.name, a.media_type, Buffer.from(a.data, 'base64').toString()]),
     [['nota.mp3', 'audio/mpeg', 'ID3audio'], ['acta.png', 'image/png', 'PNG']]);
   const page = await (await as('luis', `/correo/${id}`)).text();
@@ -52,7 +54,7 @@ test('enviar con adjuntos: mosAIc decide y el destinatario recibe texto y archiv
 });
 
 test('un correo retenido no llega; Legal lo libera', async () => {
-  action = 'review';
+  status = 'revise';
   const id = (await as('ana', '/correo', form())).headers.get('location').split('/').at(-1);
   assert.equal((await as('luis', `/correo/${id}`)).status, 404);
   const detail = await (await as('ana', `/correo/${id}`)).text();
