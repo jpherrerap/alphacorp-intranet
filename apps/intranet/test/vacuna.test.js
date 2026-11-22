@@ -31,8 +31,12 @@ test('el seed de vacunas: comunicaciones no ve el informe de ensayos', async () 
 test('los borradores de Ana se abren prellenados y mosAIc los retiene', async () => {
   const list = await (await as('ana', '/correo/borradores')).text();
   assert.match(list, /Datos para la nota de prensa/);
-  assert.match(list, /Lo que se comenta en el laboratorio/);
-  assert.doesNotMatch(await (await as('luis', '/correo')).text(), /Borradores/);
+  assert.match(list, /Idea para el informe anual/);
+  assert.match(list, /Almuerzo/);
+  const inbox = await (await as('luis', '/correo')).text();
+  assert.doesNotMatch(inbox, /Borradores/);
+  assert.match(inbox, /Viajes de diciembre/);
+  assert.match(inbox, /Pedido a imprenta/);
   const compose = await (await as('ana', '/correo/redactar?borrador=borrador-nota')).text();
   assert.match(compose, /value="Datos para la nota de prensa"/);
   assert.match(compose, /value="luis" checked/);

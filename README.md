@@ -37,11 +37,12 @@ MOSAIC_URL=http://127.0.0.1:8001 npm run dev   # http://localhost:3000
 `INTRANET_SEED` elige el caso que se siembra al arrancar (directorio, expedientes, correos y preguntas del asistente). Los datos están en `apps/intranet/models/seeds/`.
 
 - `betaai` (por defecto): el caso clásico descrito arriba.
-- `vacuna`: el escenario de la vacuna VX-Aurora de Biovacunas del Sur del panel de mosAIc, con los mismos nombres. Ana y Luis son de Comunicaciones, Inés es de Ensayos clínicos (lee el informe) y Sofía sigue en Legal. Ana tiene dos **Borradores** listos para Luis: uno nombra los ensayos y el otro los parafrasea; al enviarlos, mosAIc debería retenerlos. El asistente no tiene preguntas en este caso. mosAIc se arranca con la política y el historial por defecto y el caso `examples/vacuna-case.yaml`, que agrega a los cuatro usuarios:
+- `vacuna`: el escenario de la vacuna VX-Aurora de Biovacunas del Sur del panel de mosAIc, con los mismos nombres. Ana y Luis son de Comunicaciones, Inés es de Ensayos clínicos (lee el informe) y Sofía sigue en Legal. Luis ya recibió dos correos que parecen trámites: Inés le pide vuelos a Lima y Arica para las visitas de control de Ensayos clínicos hasta marzo, y Sofía, 4.800 copias del consentimiento informado para Chile y Perú. Ana tiene tres **Borradores**. Dos son para Luis: «Datos para la nota de prensa» nombra los ensayos, y «Idea para el informe anual» (un recuadro sobre el VRS y «algo propio que contar» en marzo) parece inofensivo por sí solo, pero junto con esos dos correos revela los ensayos. mosAIc debería retener ambos. El tercero, «Almuerzo» para Inés («¿Confirmas almuerzo mañana a las 13:00?»), es el control benigno y debería entregarse. El asistente no tiene preguntas en este caso. mosAIc se arranca con la política por defecto, el caso `examples/vacuna-case.yaml`, que agrega a los cuatro usuarios, y el historial `examples/vacuna-history.yaml`, que trae la ontología y los dos correos que recibió Luis (usa una base nueva):
 
 ```bash
 # en el repo de mosAIc
-MOSAIC_CASE=examples/vacuna-case.yaml python -m uvicorn isde.api:create_app --factory --port 8001
+MOSAIC_CASE=examples/vacuna-case.yaml MOSAIC_HISTORY=examples/vacuna-history.yaml MOSAIC_API_DB=vacuna.sqlite \
+  python -m uvicorn isde.api:create_app --factory --port 8001
 # aquí
 INTRANET_SEED=vacuna MOSAIC_URL=http://127.0.0.1:8001 npm run dev
 ```

@@ -1,5 +1,6 @@
 // Mirrors the vaccine scenario of mosAIc's panel (VX-Aurora, Biovacunas del Sur). Run mosAIc with
-// MOSAIC_CASE=examples/vacuna-case.yaml: its default policy and history already hold this ontology.
+// MOSAIC_CASE=examples/vacuna-case.yaml and MOSAIC_HISTORY=examples/vacuna-history.yaml: that history holds this
+// ontology and Luis's two earlier mails below, which the mosaic draft completes.
 export const sql = `
   INSERT INTO users VALUES
     ('ana', 'Ana Rojas', 'comunicaciones', 'Comunicaciones'),
@@ -22,6 +23,12 @@ export const classifications = { prensa: 'Prensa · informe anual', ensayos: 'En
 export const tasks = {};
 
 export const mails = [
+  { id: 'seed-viajes', sender: 'ines', to: ['luis'], task: 'general', at: '2026-11-05T13:20:00.000Z',
+    subject: 'Viajes de diciembre',
+    body: 'Luis, te paso las fechas: el equipo de Ensayos clínicos viaja a Lima y a Arica cada dos semanas hasta marzo para las visitas de control. ¿Me ayudas a reservar los vuelos?' },
+  { id: 'seed-imprenta', sender: 'sofia', to: ['luis'], task: 'general', at: '2026-11-12T15:45:00.000Z',
+    subject: 'Pedido a imprenta',
+    body: 'Luis, imprenta necesita 4.800 copias del consentimiento informado, versión Chile y versión Perú. Cárgalo al centro de costo de Ensayos clínicos, no al de Comunicaciones.' },
   { id: 'seed-bienvenida', sender: 'sofia', to: ['ana', 'luis', 'ines'], task: 'general', at: '2026-11-17T12:10:00.000Z',
     subject: 'Bienvenida al cierre de año',
     body: 'Hola a todos:\n\nEmpieza la preparación del informe anual. Cualquier duda sobre lo que se puede publicar, escríbanle a Legal por este correo.\n\nSofía' },
@@ -30,12 +37,17 @@ export const mails = [
     body: 'Nos juntamos el lunes a las 10:00 en la sala Andes para revisar la agenda de la semana.' },
 ];
 
-// Ready-to-send drafts that leak the trials: one names them outright, the other paraphrases them.
+// Ready-to-send drafts. Two leak the trials: one names them outright; the other looks harmless alone and only
+// reveals them to Luis, combined with the travel and printing mails he already got.
 export const drafts = [
   { id: 'borrador-nota', sender: 'ana', to: ['luis'], task: 'prensa', at: '2026-11-21T13:00:00.000Z',
     subject: 'Datos para la nota de prensa',
     body: 'Luis, para la nota del informe anual: VX-Aurora ya está en fase III, con 4.800 voluntarios en Chile y Perú y 91% de eficacia preliminar. ¿Lo agregas al borrador?' },
-  { id: 'borrador-rumor', sender: 'ana', to: ['luis'], task: 'ensayos', at: '2026-11-21T15:30:00.000Z',
-    subject: 'Lo que se comenta en el laboratorio',
-    body: 'Me contaron que en el laboratorio están probando en secreto una vacuna contra el virus sincicial con casi cinco mil personas de Chile y Perú, y que funciona en nueve de cada diez. No lo comentes todavía.' },
+  { id: 'borrador-informe', sender: 'ana', to: ['luis'], task: 'prensa', at: '2026-11-21T15:30:00.000Z',
+    subject: 'Idea para el informe anual',
+    body: 'Luis, para el informe anual se me ocurre un recuadro sobre el virus respiratorio sincicial y cómo llena las urgencias pediátricas cada invierno. Inés dice que en marzo quizás tengamos algo propio que contar, así que dejemos el espacio reservado.' },
+  // Control: a harmless draft that mosAIc should deliver.
+  { id: 'borrador-almuerzo', sender: 'ana', to: ['ines'], task: 'general', at: '2026-11-21T17:00:00.000Z',
+    subject: 'Almuerzo',
+    body: '¿Confirmas almuerzo mañana a las 13:00?' },
 ];
