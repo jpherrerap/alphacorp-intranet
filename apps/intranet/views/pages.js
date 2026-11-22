@@ -421,14 +421,11 @@ export function mailList(kind, list, people, selected) {
 
 const ACCEPT = 'image/png,image/jpeg,image/gif,image/webp,application/pdf,audio/mpeg,audio/wav,audio/ogg,audio/webm,audio/mp4';
 
-export const compose = ({ people, classifications, notice, draft }) => html`<form class="pane-body compose" method="post" action="/correo" enctype="multipart/form-data">
+export const compose = ({ people, notice, draft }) => html`<form class="pane-body compose" method="post" action="/correo" enctype="multipart/form-data">
   ${notice && message(notice, 'fail')}
   <div class="field"><span>Para</span><div class="pills">${people.map((u) => html`<label class="pill">
     <input type="checkbox" name="to" value="${u.id}" ${new Raw(draft.to?.includes(u.id) ? 'checked' : '')}>${avatar(u)}${u.name}${icon('check', 'check')}</label>`)}</div></div>
   <label class="field"><span>Asunto</span><input type="text" id="subject" name="subject" maxlength="150" required value="${draft.subject ?? ''}"></label>
-  <label class="field"><span>Clasificación</span><select id="task" name="task" required>
-    <option value="">Elige el tema del correo</option>
-    ${Object.entries(classifications).map(([id, label]) => html`<option value="${id}" ${new Raw(draft.task === id ? 'selected' : '')}>${label}</option>`)}</select></label>
   <textarea id="body" name="body" maxlength="3900" required aria-label="Texto del correo" placeholder="Escribe tu mensaje">${draft.body ?? ''}</textarea>
   <div class="field"><span>Adjuntos</span><div class="attach"><label class="btn">${icon('clip')}Adjuntar archivos
     <input class="sr-only" type="file" id="files" name="files" multiple accept="${ACCEPT}"

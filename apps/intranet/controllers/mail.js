@@ -4,6 +4,7 @@ import { users } from '../models/index.js';
 import { seed } from '../models/seed.js';
 import * as pages from '../views/pages.js';
 
+// Only labels for display; compose no longer asks for one since mosAIc reviews every email as task "email".
 export const CLASSIFICATIONS = seed.classifications;
 // shortcut: drafts come from the seed and stay after sending, so the demo can be repeated; store them per user if they must be edited or removed.
 // Legal releases or discards what mosAIc held; it already sees every document of the case.
@@ -48,7 +49,7 @@ export const drafts = folder('drafts', 'Borradores');
 
 function renderCompose(req, res, mail, { notice, draft = {} } = {}, status = 200) {
   const people = users.all().filter((u) => u.id !== req.user.id);
-  box(req, res, mail, 'Nuevo correo', 'compose', { reading: pages.compose({ people, classifications: CLASSIFICATIONS, notice, draft }) }, status);
+  box(req, res, mail, 'Nuevo correo', 'compose', { reading: pages.compose({ people, notice, draft }) }, status);
 }
 
 export function composeForm(req, res) {
@@ -74,10 +75,9 @@ export async function send(req, res) {
   if (!mail) return;
   const form = await readForm(req);
   if (!form) return renderCompose(req, res, mail, { notice: 'El correo supera 4 MB o el formulario no es válido.' }, 413);
-  const draft = { task: String(form.get('task') ?? ''), to: form.getAll('to').map(String),
+  const draft = { task: 'general', to: form.getAll('to').map(String),
     subject: String(form.get('subject') ?? ''), body: String(form.get('body') ?? '') };
   const retry = (notice) => renderCompose(req, res, mail, { notice, draft }, 400);
-  if (!Object.hasOwn(CLASSIFICATIONS, draft.task)) return retry('Elige una clasificación.');
   if (draft.to.some((id) => !users.find(id))) return retry('Destinatario desconocido.');
   // Browsers send an empty file part when nothing is picked.
   const files = form.getAll('files').filter((f) => typeof f !== 'string' && f.size > 0);

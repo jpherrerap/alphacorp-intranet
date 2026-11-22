@@ -23,10 +23,9 @@ const as = (user, path, body) => fetch(base + path, {
   method: body ? 'POST' : 'GET', body, headers: { cookie: `user=${user}` }, redirect: 'manual',
 });
 
-function form({ to = ['luis'], task = 'due', subject = 'Acta O-17', body = 'Te adjunto el acta.', files = [] } = {}) {
+function form({ to = ['luis'], subject = 'Acta O-17', body = 'Te adjunto el acta.', files = [] } = {}) {
   const f = new FormData();
   to.forEach((u) => f.append('to', u));
-  f.append('task', task);
   f.append('subject', subject);
   f.append('body', body);
   files.forEach(([name, type, data]) => f.append('files', new Blob([data], { type }), name));
@@ -69,10 +68,8 @@ test('un correo retenido no llega; Legal lo libera', async () => {
   assert.equal((await as('luis', `/correo/${id}`)).status, 200);
 });
 
-test('rechaza adjuntos no permitidos y tareas desconocidas sin llamar a mosAIc', async () => {
+test('rechaza adjuntos no permitidos y destinatarios desconocidos sin llamar a mosAIc', async () => {
   assert.equal((await as('ana', '/correo', form({ files: [['x.html', 'text/html', '<script>']] }))).status, 400);
-  assert.equal((await as('ana', '/correo', form({ task: 'toString' }))).status, 400);
-  assert.equal((await as('ana', '/correo', form({ task: 'acta' }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ subject: '' }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ to: ['nadie'] }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ files: [['big.pdf', 'application/pdf', Buffer.alloc(4_600_000)]] }))).status, 413);
