@@ -1,18 +1,26 @@
 import { SEEDED } from '@alphacorp/mail-engine';
 import { html, Raw } from './html.js';
 
-// Familiar intranet software, enlarged for a projector: 20px base (growing to 26px on 1080p), nothing under 18px, light ground for lit rooms.
+// Familiar intranet software, enlarged for a projector: 20px base (growing to 26px on 1080p), nothing under 18px; follows the OS light or dark setting.
 const STYLE = new Raw(`
   :root {
     --bar: 4.5rem; --rail: 7rem;
     --bg: #eef1f4; --surface: #ffffff; --fg: #101820; --muted: #3e4a56; --line: #cfd6dd; --hover: #e6ecf1; --select: #d5e8ec;
     --brand: #0b4a57; --brand-fg: #ffffff; --accent: #0b6476; --accent-fg: #ffffff; --accent-soft: #dcecef;
-    --ok: #146c3c; --wait: #8f5300; --fail: #b3261e; --info: #1d56b3;
+    --ok: #146c3c; --wait: #8f5300; --fail: #b3261e; --info: #1d56b3; --on-tone: #ffffff;
+    --accent-hover: #09505e; --field: #9aa6b1;
     --ease: cubic-bezier(.16, 1, .3, 1);
     color-scheme: light; font: clamp(20px, calc(6px + 1.05vw), 26px)/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
   }
+  /* Dark keeps the same structure; status tones lighten so they read as text too, and badges flip to dark ink. */
+  @media (prefers-color-scheme: dark) { :root {
+    --bg: #0e1418; --surface: #161f25; --fg: #e8eef2; --muted: #a9b6c1; --line: #2c3943; --hover: #1f2a31; --select: #173c44;
+    --brand: #0a2f37; --accent: #5cc0d2; --accent-fg: #06222a; --accent-soft: #163a42; --accent-hover: #7fd0de; --field: #4d5c68;
+    --ok: #5fd08f; --wait: #f0b44a; --fail: #ff8a7d; --info: #8fb4ff; --on-tone: #0b1216;
+    color-scheme: dark;
+  } }
   * { box-sizing: border-box; }
-  html { scrollbar-color: #9aa6b1 var(--bg); }
+  html { scrollbar-color: var(--field) var(--bg); }
   body { margin: 0; background: var(--bg); color: var(--fg); caret-color: var(--accent); }
   ::selection { background: var(--accent); color: var(--accent-fg); }
   a { color: var(--accent); text-underline-offset: .18em; }
@@ -55,7 +63,7 @@ const STYLE = new Raw(`
          text-decoration: none; font-weight: 600; transition: background .2s; }
   .btn:hover { background: var(--hover); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
-  .btn.primary:hover { background: #09505e; }
+  .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
   .notice { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.25rem; border-radius: .6rem; font-size: 1.1rem; font-weight: 600;
             border: 2px solid var(--tone, var(--wait)); color: var(--tone, var(--wait));
@@ -66,7 +74,7 @@ const STYLE = new Raw(`
 
   /* State never depends on colour alone: every badge carries its own icon. */
   .badge { display: inline-flex; align-items: center; gap: .45rem; padding: .3rem .85rem .3rem .65rem; border-radius: 2rem;
-           background: var(--tone); color: #fff; font-weight: 700; white-space: nowrap; }
+           background: var(--tone); color: var(--on-tone); font-weight: 700; white-space: nowrap; }
   .badge.small { font-size: .9rem; padding: .15rem .65rem .15rem .5rem; }
   .ok { --tone: var(--ok); } .wait { --tone: var(--wait); } .fail { --tone: var(--fail); } .info { --tone: var(--info); }
   .tag { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; padding: .15rem .7rem; border-radius: .35rem;
@@ -148,7 +156,7 @@ const STYLE = new Raw(`
   .compose { display: grid; gap: 1.1rem; max-width: 60rem; }
   .field { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: .75rem; align-items: center; }
   .field > span { color: var(--muted); font-weight: 600; }
-  .field input[type=text], .field select, textarea { width: 100%; min-height: 3rem; padding: .55rem .8rem; border: 1px solid #9aa6b1;
+  .field input[type=text], .field select, textarea { width: 100%; min-height: 3rem; padding: .55rem .8rem; border: 1px solid var(--field);
          border-radius: .45rem; background: var(--surface); }
   .attach { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
   .attach label:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }

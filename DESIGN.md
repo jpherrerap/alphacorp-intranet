@@ -201,14 +201,14 @@ components:
 
 This is ordinary Microsoft-365-class office software, the kind every person in the room has used, set at a scale the back row can read. The structure is the category standard: a deep-teal app bar that says whose screen it is, a narrow icon rail that says which app is open, white panes on a cool grey ground, and in Correo the three Outlook panes (folders, message list, reading pane). Nothing is themed. The look earns trust by being familiar.
 
-The projector sets the scale. The root type size grows with the viewport from 20px to 26px (clamp(20px, calc(6px + 1.05vw), 26px)), reaching its maximum around a 1080p projector, and no text is smaller than 18px. Controls are at least 3rem tall, avatars run up to 5rem, and status shows as solid, saturated pills that each carry their own drawn icon. The ground is light only, so it holds up in a lit room. Depth comes from hairline borders and tonal washes, never from shadows.
+The projector sets the scale. The root type size grows with the viewport from 20px to 26px (clamp(20px, calc(6px + 1.05vw), 26px)), reaching its maximum around a 1080p projector, and no text is smaller than 18px. Controls are at least 3rem tall, avatars run up to 5rem, and status shows as solid, saturated pills that each carry their own drawn icon. The ground follows the operating system: light by default, which holds up best in a lit room, and a dark theme with the same structure when the OS asks for it. Depth comes from hairline borders and tonal washes, never from shadows.
 
 One moment moves: when a message's delivery outcomes appear, the rows rise into place one after another and each status badge settles from a slight overscale. The assistant's big outcome notice uses the same rise-and-settle. Everything else changes state with a 0.2s colour fade, and all motion stops under reduced-motion.
 
 **Key Characteristics:**
 - Category-standard intranet shell: teal app bar, 7rem icon rail, white panes, three-pane mailbox.
 - A fluid 20px-to-26px root, an 18px floor, generous 3rem-minimum hit targets. Every size is in rem, so the whole interface scales together.
-- Light office ground only (`color-scheme: light`).
+- Light office ground by default; `prefers-color-scheme: dark` swaps the tokens for a dark ground (#0e1418), dark panes (#161f25), a light teal accent (#5cc0d2), lighter status tones (#5fd08f, #f0b44a, #ff8a7d, #8fb4ff) and dark badge ink (`--on-tone` #0b1216).
 - Four solid status tones, each always paired with an icon.
 - Flat: hairline borders and tonal washes, no shadows.
 - One signature motion (outcome rows rising, badges settling), with every other transition a quiet colour fade.
@@ -356,7 +356,7 @@ White initials on a circle in the person's identity colour, at 2.6rem by default
 
 ### Don't:
 - **Don't** add box-shadows. The system is flat.
-- **Don't** add a dark mode or a dark ground. The system is light only, for lit rooms.
+- **Don't** hardcode colours outside the tokens; every colour must have a dark counterpart in the `prefers-color-scheme: dark` block.
 - **Don't** use the status tones for decoration or chrome.
 - **Don't** introduce a second typeface or a themed costume look. The world is the familiar office suite.
 - **Don't** animate anything except state arrivals.
