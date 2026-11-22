@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-// Limits mirror mosAIc's /v1/messages (PR #6); the 4 MB total keeps a whole email under Vercel's ~4.5 MB body cap.
+// Limits mirror mosAIc's /v1/reviews; the 4 MB total keeps a whole email under Vercel's ~4.5 MB body cap.
 export const LIMITS = {
   files: 4,
   totalBytes: 4_000_000,
@@ -14,16 +14,13 @@ export const LIMITS = {
 const DELIVERED = ['delivered', 'repaired', 'released'];
 // Reason stored on seeded deliveries, which never went through mosAIc.
 export const SEEDED = 'seed';
-export const REPAIRED_SUBJECT = 'Mensaje reparado por mosAIc';
+// Why mosAIc held a delivery, as Legal reads it.
+const HELD = { revise: 'riesgo de inferencia', rejected: 'adjunto no evaluable', review: 'requiere reevaluación' };
 
 // The subject can leak as much as the body, so mosAIc reviews both as one draft.
 const draftOf = ({ subject, body }) => `Asunto: ${subject}\n\n${body}`;
-
-// A repair returns one text; recover the subject when mosAIc kept the prefix, otherwise use a neutral one.
-export function splitDraft(text) {
-  const m = /^Asunto: ([^\n]*)\n\n([\s\S]*)$/.exec(text);
-  return m && m[1].trim() && m[2].trim() ? { subject: m[1].trim(), text: m[2] } : { subject: REPAIRED_SUBJECT, text };
-}
+// mosAIc review ids allow only letters, digits, '-' and '_'.
+export const reviewIdOf = (deliveryId) => deliveryId.replace(':', '_');
 
 // Returns an error message, or null when the email can go to mosAIc.
 export function invalid(email) {
@@ -61,21 +58,21 @@ export function mailEngine({ db, mosaic }) {
     set: db.prepare('UPDATE deliveries SET status = ?, subject = ?, text = ?, reason = ? WHERE id = ?'),
   };
 
-  // One decision per recipient; the request_id is stable so a retry is idempotent in mosAIc.
+  // One decision per recipient. A human email answers no case task, so mosAIc reads it as free text
+  // (task "email") and decides by inference risk. The review id is stable, so a retry is idempotent.
   async function gate(d) {
     const mail = q.mail.get(d.mail_id);
     const files = q.files.all(mail.id);
-    const item = { user: d.recipient, task: mail.task, draft: draftOf(mail), request_id: d.id, day: day() };
-    // Only send the field when needed: a mosAIc without attachment support rejects it with 422.
+    const reviewId = reviewIdOf(d.id);
+    const item = { review_id: reviewId, user: d.recipient, task: 'email', question: mail.subject, text: draftOf(mail), day: day() };
     if (files.length) item.attachments = files.map((f) => ({ name: f.name, media_type: f.media_type, data: Buffer.from(f.data).toString('base64') }));
     try {
-      const { action, text } = await mosaic.message(item);
-      if (action === 'allow') q.set.run('delivered', null, mail.body, null, d.id);
-      // A rewritten text no longer matches its files, so a repair with attachments is held.
-      else if (action === 'repair' && text && !files.length) {
-        const repaired = splitDraft(text);
-        q.set.run('repaired', repaired.subject, repaired.text, null, d.id);
-      } else q.set.run('held', null, null, action, d.id);
+      const { status } = await mosaic.review(item);
+      if (status !== 'approved') return q.set.run('held', null, null, HELD[status] ?? status, d.id);
+      // Delivery re-checks the context, so an approval can still turn into a hold.
+      const { action, reason } = await mosaic.deliverReview(reviewId, d.recipient);
+      if (action === 'allow' || action === 'repair') q.set.run('delivered', null, mail.body, null, d.id);
+      else q.set.run('held', null, null, HELD[action] ?? reason ?? action, d.id);
     } catch (err) {
       q.set.run('error', null, null, err.message, d.id);
     }

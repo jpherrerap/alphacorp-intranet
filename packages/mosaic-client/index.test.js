@@ -18,6 +18,11 @@ test('envía JSON a la ruta de la API', async () => {
   assert.equal(calls[1].url, 'http://mosaic.test/v1/inbox/ana%2Fx');
   assert.equal(calls[1].body, undefined);
   assert.equal(calls[2].url, 'http://mosaic.test/v1/sources');
+  await client.review({ review_id: 'm_1' });
+  await client.deliverReview('m_1', 'ana');
+  assert.equal(calls[3].url, 'http://mosaic.test/v1/reviews');
+  assert.equal(calls[4].url, 'http://mosaic.test/v1/reviews/m_1/deliver');
+  assert.deepEqual(JSON.parse(calls[4].body), { user: 'ana' });
 });
 
 test('un error de mosAIc se propaga con su detalle', async () => {
