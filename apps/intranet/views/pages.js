@@ -55,12 +55,14 @@ const STYLE = new Raw(`
           height: calc(100dvh - var(--bar)); background: var(--surface); border-right: 1px solid var(--line); }
   .rail a, .theme { display: grid; justify-items: center; gap: .2rem; padding: .7rem .25rem; border-radius: .5rem; color: var(--muted);
             text-decoration: none; font-size: .9rem; font-weight: 600; transition: background .2s, color .2s; }
-  .rail a .icon, .theme .icon { width: 1.8rem; height: 1.8rem; }
+  .rail a .icon { width: 1.8rem; height: 1.8rem; }
   .rail a:hover, .theme:hover { background: var(--hover); color: var(--fg); }
-  .theme { margin-top: auto; width: 100%; border: 0; background: transparent; cursor: pointer; }
+  /* Deliberately smaller than the app links: a setting, not a destination. */
+  .theme { margin-top: auto; align-self: center; padding: .5rem; border: 0; background: transparent; cursor: pointer; }
+  .theme .icon { width: 1.3rem; height: 1.3rem; }
   .theme.floating { position: fixed; left: 1rem; bottom: 1rem; width: auto; background: var(--surface); border: 1px solid var(--line); }
   :root[data-theme="dark"] .theme .to-dark, :root:not([data-theme="dark"]) .theme .to-light { display: none; }
-  .theme span { display: grid; justify-items: center; gap: .2rem; }
+  .theme > span { display: grid; place-items: center; }
   .rail a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
 
   .page { width: 100%; max-width: 76rem; padding: 2rem 2.5rem 3rem; display: grid; gap: 1.5rem; align-content: start; }
@@ -286,8 +288,8 @@ const full = (raw) => Object.assign(raw, { full: true });
 const THEME_FLIP = "const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;"
   + "r.dataset.theme=d?'light':'dark';document.cookie='theme='+r.dataset.theme+';path=/;max-age=31536000;samesite=lax'";
 const themeOf = (cookie = '') => /(?:^|;\s*)theme=(dark|light)(?:;|$)/.exec(cookie)?.[1];
-const themeToggle = (cls) => html`<button type="button" class="theme ${cls}" onclick="${THEME_FLIP}">
-  <span class="to-dark">${icon('moon')}Oscuro</span><span class="to-light">${icon('sun')}Claro</span></button>`;
+const themeToggle = (cls) => html`<button type="button" class="theme ${cls}" title="Cambiar tema" onclick="${THEME_FLIP}">
+  <span class="to-dark">${icon('moon')}<span class="sr-only">Tema oscuro</span></span><span class="to-light">${icon('sun')}<span class="sr-only">Tema claro</span></span></button>`;
 
 export const layout = (title, user, body, path = '', theme) => {
   const section = path.split('/')[1];
