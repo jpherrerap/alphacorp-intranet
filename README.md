@@ -4,11 +4,20 @@ Intranet empresarial ficticia (MVC) para probar [mosAIc](https://github.com/plat
 
 - `apps/intranet`: Express 5. `models/` (SQLite en memoria con `node:sqlite`), `controllers/`, `views/` (plantillas en JS que escapan todo).
 - `packages/mosaic-client`: cliente de la API HTTP de mosAIc.
+- `packages/mail-engine`: motor de correos mock. Cada entrega pasa por mosAIc antes de llegar al destinatario.
 
 ## Qué hace con mosAIc
 
 - **La identidad es de la intranet.** El usuario de la sesión fija el rol que recibe mosAIc. El login es una cookie sin firmar: solo sirve para el mock.
 - **Evidencia.** Abrir un documento envía una observación `read` a `POST /v1/observations` antes de mostrar el texto. Si mosAIc no responde, el documento no se muestra.
+- **Correo** (`/correo`). Un humano redacta un correo que responde a una tarea del caso (`due`, `signature` o `record`). Puede adjuntar imágenes, PDF o audio: hasta 4 archivos y 4 MB en total, porque Vercel corta el body en unos 4,5 MB. El motor llama a `POST /v1/messages` una vez por destinatario con `request_id = <correo>:<destinatario>`:
+  - `allow`: entrega el original con sus archivos.
+  - `repair`: entrega el texto reparado. Si el correo trae adjuntos, queda retenido.
+  - `review`: retiene el correo.
+  - Si mosAIc falla, no entrega nada y el remitente puede reintentar.
+  - El remitente ve el estado de cada destinatario. Legal (`senior_legal`) ve los retenidos y puede liberarlos o descartarlos. Antes de entregar uno liberado, el motor envía el cuerpo a `POST /v1/sources` para que mosAIc sepa lo que ahora conoce el destinatario. Los adjuntos liberados no se observan, porque `/v1/sources` solo acepta texto.
+  - Para los adjuntos, mosAIc necesita el PR «Admite adjuntos de imagen, PDF y audio en los mensajes» y su clave de Claude (y `ELEVENLABS_API_KEY` para audio). Sin eso, un correo con adjuntos queda como no entregado. Los correos sin adjuntos funcionan con cualquier versión de mosAIc.
+  - `/v1/messages` guarda cada entrega en la bandeja de mosAIc, así que los correos entregados también aparecen en la pantalla del Asistente del destinatario.
 - **Asistente.** El agente redacta un borrador con las cláusulas del caso y lo envía a `POST /v1/messages`. El usuario solo ve su bandeja (`GET /v1/inbox/{user}`), nunca el borrador.
 
 ## Ejecutar
