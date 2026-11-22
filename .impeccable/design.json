@@ -1,0 +1,498 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-22T14:00:00Z",
+  "title": "Design System: AlphaCorp Intranet",
+  "extensions": {
+    "colorMeta": {
+      "brand-teal": {
+        "role": "primary",
+        "displayName": "AlphaCorp Deep Teal",
+        "canonical": "oklch(37.8% 0.063 216)",
+        "tonalRamp": [
+          "oklch(15% 0.034 216)",
+          "oklch(25% 0.047 216)",
+          "oklch(35% 0.059 216)",
+          "oklch(45% 0.063 216)",
+          "oklch(58% 0.063 216)",
+          "oklch(72% 0.050 216)",
+          "oklch(85% 0.034 216)",
+          "oklch(95% 0.022 216)"
+        ]
+      },
+      "accent-teal": {
+        "role": "primary",
+        "displayName": "Working Teal",
+        "canonical": "oklch(46.5% 0.080 216)",
+        "tonalRamp": [
+          "oklch(15% 0.037 216)",
+          "oklch(25% 0.051 216)",
+          "oklch(35% 0.064 216)",
+          "oklch(45% 0.078 216)",
+          "oklch(58% 0.074 216)",
+          "oklch(72% 0.055 216)",
+          "oklch(85% 0.037 216)",
+          "oklch(95% 0.024 216)"
+        ]
+      },
+      "accent-teal-deep": {
+        "role": "primary",
+        "displayName": "Pressed Teal",
+        "canonical": "oklch(39.8% 0.067 216)",
+        "tonalRamp": [
+          "oklch(15% 0.035 216)",
+          "oklch(25% 0.048 216)",
+          "oklch(35% 0.061 216)",
+          "oklch(45% 0.067 216)",
+          "oklch(58% 0.067 216)",
+          "oklch(72% 0.052 216)",
+          "oklch(85% 0.035 216)",
+          "oklch(95% 0.022 216)"
+        ]
+      },
+      "accent-wash": {
+        "role": "primary",
+        "displayName": "Teal Wash",
+        "canonical": "oklch(93.2% 0.017 210)",
+        "tonalRamp": [
+          "oklch(15% 0.017 210)",
+          "oklch(25% 0.017 210)",
+          "oklch(35% 0.017 210)",
+          "oklch(45% 0.017 210)",
+          "oklch(58% 0.017 210)",
+          "oklch(72% 0.017 210)",
+          "oklch(85% 0.017 210)",
+          "oklch(95% 0.016 210)"
+        ]
+      },
+      "selection-wash": {
+        "role": "primary",
+        "displayName": "Selection Wash",
+        "canonical": "oklch(91.8% 0.021 212)",
+        "tonalRamp": [
+          "oklch(15% 0.021 212)",
+          "oklch(25% 0.021 212)",
+          "oklch(35% 0.021 212)",
+          "oklch(45% 0.021 212)",
+          "oklch(58% 0.021 212)",
+          "oklch(72% 0.021 212)",
+          "oklch(85% 0.021 212)",
+          "oklch(95% 0.018 212)"
+        ]
+      },
+      "status-delivered": {
+        "role": "secondary",
+        "displayName": "Delivered Green",
+        "canonical": "oklch(46.9% 0.111 154)",
+        "tonalRamp": [
+          "oklch(15% 0.051 154)",
+          "oklch(25% 0.070 154)",
+          "oklch(35% 0.089 154)",
+          "oklch(45% 0.107 154)",
+          "oklch(58% 0.102 154)",
+          "oklch(72% 0.076 154)",
+          "oklch(85% 0.051 154)",
+          "oklch(95% 0.033 154)"
+        ]
+      },
+      "status-waiting": {
+        "role": "secondary",
+        "displayName": "Waiting Amber",
+        "canonical": "oklch(50.1% 0.113 64)",
+        "tonalRamp": [
+          "oklch(15% 0.050 64)",
+          "oklch(25% 0.068 64)",
+          "oklch(35% 0.086 64)",
+          "oklch(45% 0.104 64)",
+          "oklch(58% 0.099 64)",
+          "oklch(72% 0.073 64)",
+          "oklch(85% 0.050 64)",
+          "oklch(95% 0.032 64)"
+        ]
+      },
+      "status-failed": {
+        "role": "secondary",
+        "displayName": "Failed Red",
+        "canonical": "oklch(50.1% 0.178 29)",
+        "tonalRamp": [
+          "oklch(15% 0.079 29)",
+          "oklch(25% 0.107 29)",
+          "oklch(35% 0.136 29)",
+          "oklch(45% 0.164 29)",
+          "oklch(58% 0.156 29)",
+          "oklch(72% 0.116 29)",
+          "oklch(85% 0.079 29)",
+          "oklch(95% 0.050 29)"
+        ]
+      },
+      "status-repaired": {
+        "role": "secondary",
+        "displayName": "Repaired Blue",
+        "canonical": "oklch(47.2% 0.159 260)",
+        "tonalRamp": [
+          "oklch(15% 0.073 260)",
+          "oklch(25% 0.100 260)",
+          "oklch(35% 0.127 260)",
+          "oklch(45% 0.153 260)",
+          "oklch(58% 0.145 260)",
+          "oklch(72% 0.108 260)",
+          "oklch(85% 0.073 260)",
+          "oklch(95% 0.047 260)"
+        ]
+      },
+      "office-ground": {
+        "role": "neutral",
+        "displayName": "Office Ground",
+        "canonical": "oklch(95.7% 0.005 248)",
+        "tonalRamp": [
+          "oklch(15% 0.005 248)",
+          "oklch(25% 0.005 248)",
+          "oklch(35% 0.005 248)",
+          "oklch(45% 0.005 248)",
+          "oklch(58% 0.005 248)",
+          "oklch(72% 0.005 248)",
+          "oklch(85% 0.005 248)",
+          "oklch(95% 0.005 248)"
+        ]
+      },
+      "pane-white": {
+        "role": "neutral",
+        "displayName": "Pane White",
+        "canonical": "oklch(100% 0 0)",
+        "tonalRamp": [
+          "oklch(15% 0 0)",
+          "oklch(25% 0 0)",
+          "oklch(35% 0 0)",
+          "oklch(45% 0 0)",
+          "oklch(58% 0 0)",
+          "oklch(72% 0 0)",
+          "oklch(85% 0 0)",
+          "oklch(95% 0 0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(20.5% 0.020 249)",
+        "tonalRamp": [
+          "oklch(15% 0.017 249)",
+          "oklch(25% 0.020 249)",
+          "oklch(35% 0.020 249)",
+          "oklch(45% 0.020 249)",
+          "oklch(58% 0.020 249)",
+          "oklch(72% 0.020 249)",
+          "oklch(85% 0.017 249)",
+          "oklch(95% 0.011 249)"
+        ]
+      },
+      "slate-muted": {
+        "role": "neutral",
+        "displayName": "Slate",
+        "canonical": "oklch(40.3% 0.026 248)",
+        "tonalRamp": [
+          "oklch(15% 0.013 248)",
+          "oklch(25% 0.018 248)",
+          "oklch(35% 0.023 248)",
+          "oklch(45% 0.026 248)",
+          "oklch(58% 0.026 248)",
+          "oklch(72% 0.020 248)",
+          "oklch(85% 0.013 248)",
+          "oklch(95% 0.008 248)"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(87.3% 0.012 248)",
+        "tonalRamp": [
+          "oklch(15% 0.012 248)",
+          "oklch(25% 0.012 248)",
+          "oklch(35% 0.012 248)",
+          "oklch(45% 0.012 248)",
+          "oklch(58% 0.012 248)",
+          "oklch(72% 0.012 248)",
+          "oklch(85% 0.012 248)",
+          "oklch(95% 0.009 248)"
+        ]
+      },
+      "field-stroke": {
+        "role": "neutral",
+        "displayName": "Field Stroke",
+        "canonical": "oklch(71.9% 0.021 246)",
+        "tonalRamp": [
+          "oklch(15% 0.014 246)",
+          "oklch(25% 0.019 246)",
+          "oklch(35% 0.021 246)",
+          "oklch(45% 0.021 246)",
+          "oklch(58% 0.021 246)",
+          "oklch(72% 0.021 246)",
+          "oklch(85% 0.014 246)",
+          "oklch(95% 0.009 246)"
+        ]
+      },
+      "hover-wash": {
+        "role": "neutral",
+        "displayName": "Hover Wash",
+        "canonical": "oklch(94.0% 0.009 243)",
+        "tonalRamp": [
+          "oklch(15% 0.009 243)",
+          "oklch(25% 0.009 243)",
+          "oklch(35% 0.009 243)",
+          "oklch(45% 0.009 243)",
+          "oklch(58% 0.009 243)",
+          "oklch(72% 0.009 243)",
+          "oklch(85% 0.009 243)",
+          "oklch(95% 0.009 243)"
+        ]
+      }
+    },
+    "identityPalette": {
+      "purpose": "Per-person avatar colour, chosen by hashing the user id; white initials. Missing person falls back to #3e4a56.",
+      "values": [
+        "#0b6476",
+        "#6a3d9a",
+        "#a8431b",
+        "#1d56b3",
+        "#2b6e2f",
+        "#8a3471"
+      ]
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page and pane headings: message subject, login heading."
+      },
+      "headline-large": {
+        "displayName": "Headline Large",
+        "purpose": "Document text; initials on the 5rem login avatar."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Big outcome notice; record codes in large list rows."
+      },
+      "title-large": {
+        "displayName": "Title Large",
+        "purpose": "Person names on login buttons."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section headings, outcome-row names, brand and app name, empty-pane prompt."
+      },
+      "body-reading": {
+        "displayName": "Body Reading",
+        "purpose": "Message body (60ch), outcome badges, reply bubbles."
+      },
+      "body-lead": {
+        "displayName": "Body Lead",
+        "purpose": "Notices, empty states, header sender, ask buttons, textarea, 3.4rem avatar initials."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default (1rem = root); outcome badge in the narrowest container."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "The 18px floor: timestamps, previews, counts, tags, small badges, rail labels."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-expo-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The single easing for arrival motion."
+      },
+      {
+        "name": "rise",
+        "value": "translateY(1rem) -> 0; 0.6s rows, 0.7s big notice",
+        "purpose": "Outcome rows and the big assistant notice arrive."
+      },
+      {
+        "name": "settle",
+        "value": "scale(1.35) -> 1; 0.7s; origin follows the badge edge (left in 4- and 1-column rows, right in 2-column)",
+        "purpose": "Status badge lands in its outcome row, 120ms after the row."
+      },
+      {
+        "name": "outcome-stagger",
+        "value": "140ms per row (--i)",
+        "purpose": "Recipients resolve one after another."
+      },
+      {
+        "name": "state-fade",
+        "value": "background/color/border-color 0.2s",
+        "purpose": "Hover and selection on rows, rail, folders, buttons, pills."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation and transition none",
+        "purpose": "All motion off under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "folder-strip",
+        "value": "1440px",
+        "purpose": "Open mail collapses folders to a 5.5rem icon strip; list narrows to minmax(16rem, 28vw)."
+      },
+      {
+        "name": "stack",
+        "value": "1100px",
+        "purpose": "Mailbox panes stack; folders become a row."
+      },
+      {
+        "name": "compact",
+        "value": "760px",
+        "purpose": "Rail shrinks to 4.5rem icons; bar text hidden; forms single-column."
+      },
+      {
+        "name": "outcome-two-col",
+        "value": "container 60rem"
+      },
+      {
+        "name": "outcome-one-col",
+        "value": "container 26rem"
+      }
+    ],
+    "rootFontSize": {
+      "value": "clamp(20px, calc(6px + 1.05vw), 26px)",
+      "purpose": "Fluid root: 20px on 1280-wide screens, 26px by 1080p projectors. All sizes are rem on this root."
+    },
+    "utilities": [
+      {
+        "name": "sr-only",
+        "value": "position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap",
+        "purpose": "Screen-reader-only headings (Asistente h1) and the native file input inside the attach button."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one forward action in a group: Redactar, Enviar, Liberar.",
+      "html": "<button class=\"ds-btn ds-btn-primary\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 20h9\"/><path d=\"M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z\"/></svg>Redactar</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 3rem; padding: .5rem 1.2rem; border-radius: .45rem; border: 1px solid #cfd6dd; background: #fff; color: #101820; font: 600 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background .2s; } .ds-btn-primary { background: #0b6476; border-color: #0b6476; color: #fff; } .ds-btn-primary:hover { background: #09505e; } .ds-btn:focus-visible { outline: 3px solid #0b6476; outline-offset: 2px; } .ds-icon { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Default Button",
+      "kind": "button",
+      "refersTo": "button-default",
+      "description": "Every non-forward action: Descartar, Reintentar, Volver, Abrir PDF.",
+      "html": "<button class=\"ds-btn\">Descartar</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 3rem; padding: .5rem 1.2rem; border-radius: .45rem; border: 1px solid #cfd6dd; background: #fff; color: #101820; font: 600 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background .2s; } .ds-btn:hover { background: #e6ecf1; } .ds-btn:focus-visible { outline: 3px solid #0b6476; outline-offset: 2px; }"
+    },
+    {
+      "name": "Status Badges",
+      "kind": "chip",
+      "refersTo": "badge-delivered",
+      "description": "Solid status pills, one fixed icon per status: check, shield, clock, alert, x, wrench, unlock.",
+      "html": "<span class=\"ds-badge ds-ok\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M20 6 9 17l-5-5\"/></svg>Entregado</span> <span class=\"ds-badge ds-wait\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z\"/><path d=\"M12 6v6l4 2\"/></svg>En espera</span> <span class=\"ds-badge ds-fail\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M18 6 6 18\"/><path d=\"m6 6 12 12\"/></svg>No entregado</span> <span class=\"ds-badge ds-info\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\"/></svg>Reparado</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem 1.1rem .45rem .8rem; border-radius: 2rem; background: var(--tone); color: #fff; font: 700 23px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; white-space: nowrap; margin: .2rem; } .ds-ok { --tone: #146c3c; } .ds-wait { --tone: #8f5300; } .ds-fail { --tone: #b3261e; } .ds-info { --tone: #1d56b3; } .ds-icon { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Delivery Outcome Row",
+      "kind": "custom",
+      "refersTo": "outcome-row",
+      "description": "Signature: one tinted row per recipient; rows rise in sequence, badges settle.",
+      "html": "<div class=\"ds-outcome\" style=\"--tone:#8f5300\"><span class=\"ds-person\"><span class=\"ds-avatar\" style=\"background:#6a3d9a\">LP</span>Luis Pérez</span><span class=\"ds-badge\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg>En espera</span><span class=\"ds-review\">Retenido · en revisión Legal</span></div>",
+      "css": ".ds-outcome { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: .6rem 1.25rem; padding: 1rem 1.25rem; border: 1px solid #cfd6dd; border-radius: .6rem; background: color-mix(in srgb, var(--tone) 6%, #fff); color: #101820; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; animation: ds-rise .6s cubic-bezier(.16,1,.3,1) both; } .ds-person { display: flex; align-items: center; gap: .8rem; font-size: 1.2rem; font-weight: 700; } .ds-avatar { display: inline-grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; color: #fff; font-size: .9rem; font-weight: 700; } .ds-badge { display: inline-flex; align-items: center; gap: .45rem; padding: .45rem 1.1rem .45rem .8rem; border-radius: 2rem; background: var(--tone); color: #fff; font-weight: 700; font-size: 1.15rem; transform-origin: left center; animation: ds-settle .7s cubic-bezier(.16,1,.3,1) .12s both; } .ds-review { grid-column: 1 / -1; font-weight: 600; } .ds-icon { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; } @keyframes ds-rise { from { transform: translateY(1rem); } } @keyframes ds-settle { from { transform: scale(1.35); } } @media (prefers-reduced-motion: reduce) { .ds-outcome, .ds-badge { animation: none; } }"
+    },
+    {
+      "name": "Folder Navigation",
+      "kind": "nav",
+      "refersTo": "folder-item-active",
+      "description": "Outlook folder column: icon, label, teal count; active folder in Selection Wash.",
+      "html": "<nav class=\"ds-folders\"><a href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M22 12h-6l-2 3h-4l-2-3H2\"/><path d=\"M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z\"/></svg>Recibidos</a><a href=\"#\" aria-current=\"page\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg>Retenidos <span class=\"ds-count\">1</span></a></nav>",
+      "css": ".ds-folders { display: grid; gap: .25rem; width: 13rem; padding: 1rem; background: #fff; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; } .ds-folders a { display: flex; align-items: center; gap: .7rem; padding: .7rem .8rem; border-radius: .45rem; color: #101820; text-decoration: none; font-weight: 600; transition: background .2s; } .ds-folders a:hover { background: #e6ecf1; } .ds-folders a[aria-current=page] { background: #d5e8ec; color: #0b6476; } .ds-folders a:focus-visible { outline: 3px solid #0b6476; outline-offset: 2px; } .ds-count { margin-left: auto; font-size: .9rem; font-weight: 700; min-width: 2rem; text-align: center; padding: 0 .5rem; border-radius: 1rem; background: #0b6476; color: #fff; } .ds-icon { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "App Rail",
+      "kind": "nav",
+      "refersTo": "rail-item-active",
+      "description": "7rem icon rail: icon over label; active app in Teal Wash.",
+      "html": "<nav class=\"ds-rail\"><a href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg>Asistente</a><a href=\"#\" aria-current=\"page\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\"><path d=\"M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z\"/><path d=\"m22 6-10 7L2 6\"/></svg>Correo</a></nav>",
+      "css": ".ds-rail { display: grid; gap: .35rem; width: 7rem; padding: .75rem .5rem; background: #fff; border-right: 1px solid #cfd6dd; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; } .ds-rail a { display: grid; justify-items: center; gap: .2rem; padding: .7rem .25rem; border-radius: .5rem; color: #3e4a56; text-decoration: none; font-size: .9rem; font-weight: 600; transition: background .2s, color .2s; } .ds-rail a:hover { background: #e6ecf1; color: #101820; } .ds-rail a[aria-current=page] { background: #dcecef; color: #0b6476; } .ds-rail a:focus-visible { outline: 3px solid #0b6476; outline-offset: 2px; } .ds-icon { width: 1.8rem; height: 1.8rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "Compose field: muted label column, 3rem input with Field Stroke border.",
+      "html": "<label class=\"ds-field\"><span>Asunto</span><input type=\"text\" placeholder=\"¿Me mandas el acta de O-17?\"></label>",
+      "css": ".ds-field { display: grid; grid-template-columns: 9rem minmax(0,1fr); gap: .75rem; align-items: center; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; } .ds-field > span { color: #3e4a56; font-weight: 600; } .ds-field input { width: 100%; min-height: 3rem; padding: .55rem .8rem; border: 1px solid #9aa6b1; border-radius: .45rem; background: #fff; color: #101820; font: inherit; } .ds-field input:focus-visible { outline: 3px solid #0b6476; outline-offset: 2px; }"
+    },
+    {
+      "name": "Attach Files",
+      "kind": "input",
+      "refersTo": "attach-button",
+      "description": "Native file input hidden inside a default button; chosen names listed beside it.",
+      "html": "<div class=\"ds-attach\"><label class=\"ds-btn\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M21 11.5 12.5 20a5 5 0 0 1-7-7L14 4.5a3.5 3.5 0 0 1 5 5L10.5 18a2 2 0 0 1-3-3L15 7.5\"/></svg>Adjuntar archivos<input class=\"ds-sr\" type=\"file\" multiple></label><output class=\"ds-muted\">acta-o17.png</output></div>",
+      "css": ".ds-attach { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; } .ds-btn { display: inline-flex; align-items: center; gap: .55rem; min-height: 3rem; padding: .5rem 1.2rem; border-radius: .45rem; border: 1px solid #cfd6dd; background: #fff; color: #101820; font-weight: 600; cursor: pointer; transition: background .2s; } .ds-btn:hover { background: #e6ecf1; } .ds-attach label:has(input:focus-visible) { outline: 3px solid #0b6476; outline-offset: 2px; } .ds-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; } .ds-muted { color: #3e4a56; } .ds-icon { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Recipient Pill",
+      "kind": "chip",
+      "refersTo": "recipient-pill-selected",
+      "description": "Checkable recipient: avatar + name; checked turns teal-bordered with a check.",
+      "html": "<label class=\"ds-pill\"><input type=\"checkbox\" checked><span class=\"ds-avatar\" style=\"background:#a8431b\">SM</span>Sofía Mena</label>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: .6rem; padding: .35rem 1rem .35rem .4rem; border: 2px solid #cfd6dd; border-radius: 2.5rem; cursor: pointer; font: 600 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; color: #101820; transition: background .2s, border-color .2s; } .ds-pill:has(input:checked) { border-color: #0b6476; background: #dcecef; } .ds-pill input { position: absolute; opacity: 0; pointer-events: none; } .ds-pill:has(input:focus-visible) { outline: 3px solid #0b6476; outline-offset: 2px; } .ds-avatar { display: inline-grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; color: #fff; font-size: .9rem; font-weight: 700; }"
+    },
+    {
+      "name": "Pane",
+      "kind": "card",
+      "refersTo": "pane",
+      "description": "White pane on the grey ground; hairline border, no shadow.",
+      "html": "<section class=\"ds-pane\"><h2>Documentos</h2><p>Acta de firma O-17</p></section>",
+      "css": ".ds-pane { background: #fff; border: 1px solid #cfd6dd; border-radius: .6rem; padding: 1.5rem 1.75rem; display: grid; gap: 1.25rem; color: #101820; font: 20px/1.45 \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, sans-serif; } .ds-pane h2 { font-size: 1.2rem; margin: 0; } .ds-pane p { margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Back-Row Office Suite",
+    "overview": "This is ordinary Microsoft-365-class office software, the kind every person in the room has used, set at a scale the back row can read. The structure is the category standard: a deep-teal app bar that says whose screen it is, a narrow icon rail that says which app is open, white panes on a cool grey ground, and in Correo the three Outlook panes (folders, message list, reading pane). Nothing is themed. The look earns trust by being familiar.\n\nThe projector sets the scale. The root type size grows with the viewport from 20px to 26px (clamp(20px, calc(6px + 1.05vw), 26px)), reaching its maximum around a 1080p projector, and no text is smaller than 18px. Controls are at least 3rem tall, avatars run up to 5rem, and status shows as solid, saturated pills that each carry their own drawn icon. The ground is light only, so it holds up in a lit room. Depth comes from hairline borders and tonal washes, never from shadows.\n\nOne moment moves: when a message's delivery outcomes appear, the rows rise into place one after another and each status badge settles from a slight overscale. The assistant's big outcome notice uses the same rise-and-settle. Everything else changes state with a 0.2s colour fade, and all motion stops under reduced-motion.",
+    "keyCharacteristics": [
+      "Category-standard intranet shell: teal app bar, 7rem icon rail, white panes, three-pane mailbox.",
+      "A fluid 20px-to-26px root, an 18px floor, generous 3rem-minimum hit targets. Every size is in rem, so the whole interface scales together.",
+      "Light office ground only (`color-scheme: light`).",
+      "Four solid status tones, each always paired with an icon.",
+      "Flat: hairline borders and tonal washes, no shadows.",
+      "One signature motion (outcome rows rising, badges settling), with every other transition a quiet colour fade."
+    ],
+    "rules": [
+      {
+        "name": "The Status Owns Saturation Rule",
+        "body": "Only the four status tones and the avatar hues are fully saturated. Chrome stays teal and grey, so a coloured badge is always news.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never Colour Alone Rule",
+        "body": "Every status badge, chip, and notice pairs its tone with a drawn SVG icon and a word. A badge without an icon is broken.",
+        "section": "colors"
+      },
+      {
+        "name": "The 18px Floor Rule",
+        "body": "Nothing renders below 0.9rem, which is 18px at the smallest root and grows with it. A smaller size means the content should be cut, not shrunk.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline Not Shadow Rule",
+        "body": "Panes separate with a 1px Hairline and a white-on-grey step, never with a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** size everything in rem on the fluid 20px-to-26px root, and keep every text at 0.9rem or larger.",
+      "**Do** pair every status tone with its drawn SVG icon and a word, in a solid pill with white bold text.",
+      "**Do** use Working Teal for exactly the forward action in a group, and default buttons for everything else.",
+      "**Do** separate surfaces with 1px Hairline borders and the white-on-grey step.",
+      "**Do** keep each person's avatar colour identical everywhere they appear.",
+      "**Do** keep motion to the outcome rise-and-settle and 0.2s colour fades, and stop it all under `prefers-reduced-motion`."
+    ],
+    "donts": [
+      "**Don't** add box-shadows. The system is flat.",
+      "**Don't** add a dark mode or a dark ground. The system is light only, for lit rooms.",
+      "**Don't** use the status tones for decoration or chrome.",
+      "**Don't** introduce a second typeface or a themed costume look. The world is the familiar office suite.",
+      "**Don't** animate anything except state arrivals."
+    ]
+  }
+}

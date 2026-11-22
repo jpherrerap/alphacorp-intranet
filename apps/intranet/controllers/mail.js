@@ -19,27 +19,30 @@ function engine(req, res) {
   return mail;
 }
 
-// Every mail page shares the folder sidebar and its counters.
-function box(req, res, mail, title, folder, content, status = 200) {
+// Every mail page shares the folder sidebar and its counters; like Outlook, an open email keeps its folder list beside it.
+function box(req, res, mail, title, folder, { list = null, reading = null }, status = 200) {
   const reviewer = isReviewer(req.user);
   const counts = { inbox: mail.unread(req.user.id), held: reviewer ? mail.held().length : null };
-  pages.render(res, title, req.user, pages.mailbox({ title, folder, counts, content }), status);
+  pages.render(res, title, req.user, pages.mailbox({ title, folder, counts, list, reading }), status);
 }
 
-const folder = (key, title, list) => (req, res) => {
+const LISTS = { inbox: (mail, user) => mail.inbox(user.id), sent: (mail, user) => mail.sent(user.id), held: (mail) => mail.held() };
+const listOf = (key, mail, user, selected) => pages.mailList(key, LISTS[key](mail, user), directory(), selected);
+
+const folder = (key, title) => (req, res) => {
   const mail = engine(req, res);
   if (!mail) return;
-  if (key === 'held' && !isReviewer(req.user)) return box(req, res, mail, 'No disponible', key, pages.message('Solo Legal revisa los correos retenidos.'), 404);
-  box(req, res, mail, title, key, pages.mailList(key, list(mail, req.user), directory(), CLASSIFICATIONS));
+  if (key === 'held' && !isReviewer(req.user)) return box(req, res, mail, 'No disponible', key, { reading: pages.message('Solo Legal revisa los correos retenidos.') }, 404);
+  box(req, res, mail, title, key, { list: listOf(key, mail, req.user) });
 };
 
-export const inbox = folder('inbox', 'Recibidos', (mail, user) => mail.inbox(user.id));
-export const sent = folder('sent', 'Enviados', (mail, user) => mail.sent(user.id));
-export const held = folder('held', 'Retenidos por mosAIc', (mail) => mail.held());
+export const inbox = folder('inbox', 'Recibidos');
+export const sent = folder('sent', 'Enviados');
+export const held = folder('held', 'Retenidos por mosAIc');
 
 function renderCompose(req, res, mail, { notice, draft = {} } = {}, status = 200) {
   const people = users.all().filter((u) => u.id !== req.user.id);
-  box(req, res, mail, 'Nuevo correo', 'compose', pages.compose({ people, classifications: CLASSIFICATIONS, notice, draft }), status);
+  box(req, res, mail, 'Nuevo correo', 'compose', { reading: pages.compose({ people, classifications: CLASSIFICATIONS, notice, draft }) }, status);
 }
 
 export function composeForm(req, res) {
@@ -85,10 +88,10 @@ export function show(req, res) {
   if (!mail) return;
   const reviewer = isReviewer(req.user);
   const email = mail.view(req.user.id, req.params.id, { reviewer });
-  if (!email) return box(req, res, mail, 'No disponible', null, pages.message('El correo no existe o no te llegó.'), 404);
+  if (!email) return box(req, res, mail, 'No disponible', null, { reading: pages.message('El correo no existe o no te llegó.') }, 404);
   if (email.sender !== req.user.id) mail.markRead(req.user.id, email.id);
   const from = email.sender === req.user.id ? 'sent' : email.deliveries ? 'held' : 'inbox';
-  box(req, res, mail, email.subject, from, pages.mailView(email, directory(), CLASSIFICATIONS, req.user, reviewer));
+  box(req, res, mail, email.subject, from, { list: listOf(from, mail, req.user, email.id), reading: pages.mailView(email, directory(), CLASSIFICATIONS, req.user, reviewer) });
 }
 
 export function attachment(req, res) {
