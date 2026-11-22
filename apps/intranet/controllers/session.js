@@ -14,7 +14,7 @@ export const loginForm = (req, res) => pages.render(res, 'Ingresar', null, pages
 export function login(req, res) {
   const user = users.find(req.body?.user);
   if (!user) return pages.render(res, 'Ingresar', null, pages.login(users.all()), 400);
-  res.cookie('user', user.id, { httpOnly: true, sameSite: 'lax' }).redirect('/expedientes');
+  res.cookie('user', user.id, { httpOnly: true, sameSite: 'lax' }).redirect('/correo');
 }
 
 export const logout = (req, res) => res.clearCookie('user').redirect('/login');
