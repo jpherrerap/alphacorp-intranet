@@ -131,3 +131,44 @@ test('los correos de ejemplo se cargan una vez y no pasan por mosAIc', () => {
   assert.equal(mail.inbox('ana').length, 1);
   assert.deepEqual(mail.sent('ines')[0].deliveries.map((d) => [d.status, d.reason]), [['delivered', 'seed'], ['delivered', 'seed']]);
 });
+
+test('un repair entrega el texto reparado, nunca el original ni sus adjuntos', async () => {
+  delivery = { action: 'repair', text: 'Asunto: Plazo\n\nVence pronto.' };
+  const id = await mail.send(email({ attachments: [pdf] }));
+  assert.equal(mail.inbox('luis')[0].status, 'repaired');
+  const seen = mail.view('luis', id);
+  assert.deepEqual([seen.subject, seen.text, seen.attachments], ['Plazo', 'Vence pronto.', []]);
+});
+
+test('un repair sin texto queda retenido', async () => {
+  delivery = { action: 'repair', text: null };
+  await mail.send(email());
+  assert.deepEqual(mail.inbox('luis'), []);
+});
+
+test('reintentar tras una entrega cuya respuesta se perdió no la retiene', async () => {
+  decide = () => ({ status: 'delivered' });
+  const id = await mail.send(email());
+  assert.equal(mail.view('luis', id).text, 'Vence el viernes.');
+});
+
+test('la copia externa sale solo después de mosAIc y con lo que ve el destinatario', async () => {
+  const copies = [];
+  mail = mailEngine({ db: new DatabaseSync(':memory:'), mosaic, transport: async (c) => { copies.push(c); calls.push(['transport', c.id]); } });
+  decide = ({ user }) => ({ status: user === 'luis' ? 'approved' : 'revise' });
+  delivery = { action: 'repair', text: 'Asunto: Plazo\n\nVence pronto.' };
+  const id = await mail.send(email({ to: ['luis', 'ines'], attachments: [pdf] }));
+  assert.deepEqual(calls.map(([kind]) => kind), ['review', 'deliver', 'transport', 'review']);
+  assert.deepEqual(copies.map(({ recipient, status, subject, text, files }) => ({ recipient, status, subject, text, files })),
+    [{ recipient: 'luis', status: 'repaired', subject: 'Plazo', text: 'Vence pronto.', files: [] }]);
+  await mail.release(`${id}:ines`);
+  assert.deepEqual(calls.slice(-2).map(([kind]) => kind), ['source', 'transport']);
+  assert.equal(copies[1].status, 'released');
+  assert.equal(copies[1].files.length, 1);
+});
+
+test('si falla la copia externa, la entrega en la intranet no cambia', async () => {
+  mail = mailEngine({ db: new DatabaseSync(':memory:'), mosaic, transport: async () => { throw new Error('sin red'); } });
+  const id = await mail.send(email());
+  assert.equal(mail.view('luis', id).text, 'Vence el viernes.');
+});

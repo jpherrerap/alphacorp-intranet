@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+export { transportFrom } from './transport.js';
+
 // Limits mirror mosAIc's /v1/reviews; the 4 MB total keeps a whole email under Vercel's ~4.5 MB body cap.
 export const LIMITS = {
   files: 4,
@@ -39,7 +41,7 @@ const now = () => new Date().toISOString();
 const day = () => now().slice(0, 10);
 
 // Mock mail engine: every delivery passes through mosAIc's gate before a recipient can see it.
-export function mailEngine({ db, mosaic }) {
+export function mailEngine({ db, mosaic, transport }) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS mails (
       id TEXT PRIMARY KEY, sender TEXT NOT NULL, task TEXT NOT NULL, subject TEXT NOT NULL, body TEXT NOT NULL, at TEXT NOT NULL);
@@ -58,6 +60,20 @@ export function mailEngine({ db, mosaic }) {
     set: db.prepare('UPDATE deliveries SET status = ?, subject = ?, text = ?, reason = ? WHERE id = ?'),
   };
 
+  // Copies what the recipient now sees to a real mailbox, only after mosAIc or Legal let it through.
+  async function ship(id) {
+    if (!transport) return;
+    const d = q.delivery.get(id);
+    const mail = q.mail.get(d.mail_id);
+    try {
+      await transport({ id, recipient: d.recipient, status: d.status, subject: d.subject ?? mail.subject, text: d.text,
+        files: d.status === 'repaired' ? [] : q.files.all(mail.id) });
+    } catch (err) {
+      // shortcut: a failed copy is only logged and the intranet inbox stays the source of truth; add a retry state if copies outlive the demo.
+      console.error(`No se envió la copia externa de ${id}: ${err.message}`);
+    }
+  }
+
   // One decision per recipient. A human email answers no case task, so mosAIc reads it as free text
   // (task "email") and decides by inference risk. The review id is stable, so a retry is idempotent.
   async function gate(d) {
@@ -68,11 +84,19 @@ export function mailEngine({ db, mosaic }) {
     if (files.length) item.attachments = files.map((f) => ({ name: f.name, media_type: f.media_type, data: Buffer.from(f.data).toString('base64') }));
     try {
       const { status } = await mosaic.review(item);
-      if (status !== 'approved') return q.set.run('held', null, null, HELD[status] ?? status, d.id);
+      // 'delivered' means a retry after mosAIc delivered but the reply was lost; deliverReview replays the stored decision.
+      if (status !== 'approved' && status !== 'delivered') return q.set.run('held', null, null, HELD[status] ?? status, d.id);
       // Delivery re-checks the context, so an approval can still turn into a hold.
-      const { action, reason } = await mosaic.deliverReview(reviewId, d.recipient);
-      if (action === 'allow' || action === 'repair') q.set.run('delivered', null, mail.body, null, d.id);
-      else q.set.run('held', null, null, HELD[action] ?? reason ?? action, d.id);
+      const { action, reason, text } = await mosaic.deliverReview(reviewId, d.recipient);
+      if (action === 'allow') {
+        q.set.run('delivered', null, mail.body, null, d.id);
+        await ship(d.id);
+      } else if (action === 'repair' && text) {
+        // The repaired draft replaces subject and body; the original never reaches the recipient.
+        const [, subject, body] = text.match(/^Asunto: (.*)\n\n([\s\S]*)$/) ?? [, '(sin asunto)', text];
+        q.set.run('repaired', subject, body, null, d.id);
+        await ship(d.id);
+      } else q.set.run('held', null, null, HELD[action] ?? reason ?? action, d.id);
     } catch (err) {
       q.set.run('error', null, null, err.message, d.id);
     }
@@ -121,6 +145,7 @@ export function mailEngine({ db, mosaic }) {
       // shortcut: /v1/sources takes text only, so released attachments are not observed; send transcripts when mosAIc accepts them there.
       await mosaic.source({ origin: `mail_${d.mail_id.replaceAll('-', '')}_${d.recipient}`, at: day(), text: draftOf(mail), recipients: [d.recipient], accept: true });
       q.set.run('released', null, mail.body, null, d.id);
+      await ship(d.id);
       return true;
     },
 
