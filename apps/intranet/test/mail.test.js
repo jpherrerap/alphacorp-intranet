@@ -22,10 +22,11 @@ const as = (user, path, body) => fetch(base + path, {
   method: body ? 'POST' : 'GET', body, headers: { cookie: `user=${user}` }, redirect: 'manual',
 });
 
-function form({ to = ['luis'], task = 'due', body = 'Te adjunto el acta.', files = [] } = {}) {
+function form({ to = ['luis'], task = 'due', subject = 'Acta O-17', body = 'Te adjunto el acta.', files = [] } = {}) {
   const f = new FormData();
   to.forEach((u) => f.append('to', u));
   f.append('task', task);
+  f.append('subject', subject);
   f.append('body', body);
   files.forEach(([name, type, data]) => f.append('files', new Blob([data], { type }), name));
   return f;
@@ -37,6 +38,7 @@ test('enviar con adjuntos: mosAIc decide y el destinatario recibe texto y archiv
   const id = res.headers.get('location').split('/').at(-1);
   assert.equal(calls[0].user, 'luis');
   assert.equal(calls[0].task, 'due');
+  assert.equal(calls[0].draft, 'Asunto: Acta O-17\n\nTe adjunto el acta.');
   assert.deepEqual(calls[0].attachments.map((a) => [a.name, a.media_type, Buffer.from(a.data, 'base64').toString()]),
     [['nota.mp3', 'audio/mpeg', 'ID3audio'], ['acta.png', 'image/png', 'PNG']]);
   const page = await (await as('luis', `/correo/${id}`)).text();
@@ -53,10 +55,14 @@ test('un correo retenido no llega; Legal lo libera', async () => {
   action = 'review';
   const id = (await as('ana', '/correo', form())).headers.get('location').split('/').at(-1);
   assert.equal((await as('luis', `/correo/${id}`)).status, 404);
-  assert.match(await (await as('ana', `/correo/${id}`)).text(), /retenido por mosAIc/);
+  const detail = await (await as('ana', `/correo/${id}`)).text();
+  assert.match(detail, /En espera/);
+  assert.match(detail, /Retenido · en revisión Legal/);
+  assert.match(await (await as('ana', '/correo/enviados')).text(), /Luis · Retenido/);
   const delivery = encodeURIComponent(`${id}:luis`);
   assert.equal((await as('ana', `/correo/entregas/${delivery}/liberar`, new URLSearchParams())).status, 403);
-  assert.match(await (await as('sofia', '/correo')).text(), /Retenidos por mosAIc/);
+  assert.equal((await as('ana', '/correo/retenidos')).status, 404);
+  assert.match(await (await as('sofia', '/correo/retenidos')).text(), /Acta O-17/);
   assert.equal((await as('sofia', `/correo/entregas/${delivery}/liberar`, new URLSearchParams())).status, 302);
   assert.equal((await as('luis', `/correo/${id}`)).status, 200);
 });
@@ -64,7 +70,18 @@ test('un correo retenido no llega; Legal lo libera', async () => {
 test('rechaza adjuntos no permitidos y tareas desconocidas sin llamar a mosAIc', async () => {
   assert.equal((await as('ana', '/correo', form({ files: [['x.html', 'text/html', '<script>']] }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ task: 'toString' }))).status, 400);
+  assert.equal((await as('ana', '/correo', form({ task: 'acta' }))).status, 400);
+  assert.equal((await as('ana', '/correo', form({ subject: '' }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ to: ['nadie'] }))).status, 400);
   assert.equal((await as('ana', '/correo', form({ files: [['big.pdf', 'application/pdf', Buffer.alloc(4_600_000)]] }))).status, 413);
   assert.equal(calls.length, 0);
+});
+
+test('la bandeja trae correos de ejemplo y abrir uno lo marca como leído', async () => {
+  const page = await (await as('luis', '/correo')).text();
+  assert.match(page, /Reunión de seguimiento del lunes/);
+  assert.match(page, /class="count">3</);
+  await as('luis', '/correo/seed-reunion');
+  assert.match(await (await as('luis', '/correo')).text(), /class="count">2</);
+  assert.match(await (await as('ana', '/correo/seed-visitas')).text(), /Sin revisión · previo a mosAIc/);
 });
