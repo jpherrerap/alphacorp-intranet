@@ -131,3 +131,23 @@ test('los correos de ejemplo se cargan una vez y no pasan por mosAIc', () => {
   assert.equal(mail.inbox('ana').length, 1);
   assert.deepEqual(mail.sent('ines')[0].deliveries.map((d) => [d.status, d.reason]), [['delivered', 'seed'], ['delivered', 'seed']]);
 });
+
+test('un repair entrega el texto reparado, nunca el original ni sus adjuntos', async () => {
+  delivery = { action: 'repair', text: 'Asunto: Plazo\n\nVence pronto.' };
+  const id = await mail.send(email({ attachments: [pdf] }));
+  assert.equal(mail.inbox('luis')[0].status, 'repaired');
+  const seen = mail.view('luis', id);
+  assert.deepEqual([seen.subject, seen.text, seen.attachments], ['Plazo', 'Vence pronto.', []]);
+});
+
+test('un repair sin texto queda retenido', async () => {
+  delivery = { action: 'repair', text: null };
+  await mail.send(email());
+  assert.deepEqual(mail.inbox('luis'), []);
+});
+
+test('reintentar tras una entrega cuya respuesta se perdió no la retiene', async () => {
+  decide = () => ({ status: 'delivered' });
+  const id = await mail.send(email());
+  assert.equal(mail.view('luis', id).text, 'Vence el viernes.');
+});

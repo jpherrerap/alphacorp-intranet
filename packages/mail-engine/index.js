@@ -68,11 +68,16 @@ export function mailEngine({ db, mosaic }) {
     if (files.length) item.attachments = files.map((f) => ({ name: f.name, media_type: f.media_type, data: Buffer.from(f.data).toString('base64') }));
     try {
       const { status } = await mosaic.review(item);
-      if (status !== 'approved') return q.set.run('held', null, null, HELD[status] ?? status, d.id);
+      // 'delivered' means a retry after mosAIc delivered but the reply was lost; deliverReview replays the stored decision.
+      if (status !== 'approved' && status !== 'delivered') return q.set.run('held', null, null, HELD[status] ?? status, d.id);
       // Delivery re-checks the context, so an approval can still turn into a hold.
-      const { action, reason } = await mosaic.deliverReview(reviewId, d.recipient);
-      if (action === 'allow' || action === 'repair') q.set.run('delivered', null, mail.body, null, d.id);
-      else q.set.run('held', null, null, HELD[action] ?? reason ?? action, d.id);
+      const { action, reason, text } = await mosaic.deliverReview(reviewId, d.recipient);
+      if (action === 'allow') q.set.run('delivered', null, mail.body, null, d.id);
+      else if (action === 'repair' && text) {
+        // The repaired draft replaces subject and body; the original never reaches the recipient.
+        const [, subject, body] = text.match(/^Asunto: (.*)\n\n([\s\S]*)$/) ?? [, '(sin asunto)', text];
+        q.set.run('repaired', subject, body, null, d.id);
+      } else q.set.run('held', null, null, HELD[action] ?? reason ?? action, d.id);
     } catch (err) {
       q.set.run('error', null, null, err.message, d.id);
     }
